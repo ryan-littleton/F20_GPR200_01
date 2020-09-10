@@ -19,8 +19,7 @@ using namespace std;
 
 int main() {
 
-    // Image
-
+    // Resolution
     const int image_width = 256;
     const int image_height = 256;
 
@@ -29,10 +28,10 @@ int main() {
     output.open("out.ppm");
 
     // Render
-    output << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+    output << "P3" << endl << image_width << ' ' << image_height << endl << "255" << endl;
 
     for (int j = image_height - 1; j >= 0; --j) {
-        std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+        cerr << "\rScanlines remaining: " << j << ' ' << flush;
         for (int i = 0; i < image_width; ++i) {
             double r = double(i) / (double(image_width) - 1); // Casting these to doubles to avoid warnings about 4 and 6 bit overflows.
             double g = double(j) / (double(image_height) - 1);
@@ -42,11 +41,12 @@ int main() {
             int ig = static_cast<int>(255.999 * g);
             int ib = static_cast<int>(255.999 * b);
 
-            output << ir << ' ' << ig << ' ' << ib << '\n';
+            output << ir << ' ' << ig << ' ' << ib << endl;
         }
     }
 
-    std::cerr << "\nDone.\n";
+    // Done to error stream, close output file
+    cerr << "\nDone.\n";
     output.close();
 
 }
