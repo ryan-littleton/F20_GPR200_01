@@ -66,39 +66,12 @@ int main() {
             for (int s = 0; s < SAMPLES_PER_PIXEL; ++s) {
                 double u = (i + random_double()) / (double(IMAGE_WIDTH) - 1);
                 double v = (j + random_double()) / (double(IMAGE_HEIGHT) - 1);
-                ray r = cam.get_ray(u, v);
-                pixelColor += rayColor(r, world);
+                ray r = cam.get_ray(u, v); // Uses camera class to get ray
+                pixelColor += rayColor(r, world); // Adjusts color
             }
-            output << writeColor(pixelColor, SAMPLES_PER_PIXEL);
+            output << writeColor(pixelColor, SAMPLES_PER_PIXEL); // Outputs color to a file
         }
     }
-
-    /* Second version of loop
-    for (int j = IMAGE_HEIGHT - 1; j >= 0; --j) {
-        cerr << "\rScanlines remaining: " << j << ' ' << flush;
-        for (int i = 0; i < IMAGE_WIDTH; ++i) {
-            color pixelColor(double(i) / (double(IMAGE_WIDTH) - 1), double(j) / (double(IMAGE_HEIGHT) - 1), 0.25);
-            output << writeColor(pixelColor);
-        }
-    }
-    */
-
-    /* Old version of above loop
-    for (int j = image_height - 1; j >= 0; --j) {
-        cerr << "\rScanlines remaining: " << j << ' ' << flush;
-        for (int i = 0; i < image_width; ++i) {
-            double r = double(i) / (double(image_width) - 1); // Casting these to doubles to avoid warnings about 4 and 6 bit overflows.
-            double g = double(j) / (double(image_height) - 1);
-            double b = 0.25;
-
-            int ir = static_cast<int>(255.999 * r);
-            int ig = static_cast<int>(255.999 * g);
-            int ib = static_cast<int>(255.999 * b);
-
-            output << ir << ' ' << ig << ' ' << ib << endl;
-        }
-    }
-    */
 
     // Done to error stream, close output file
     cerr << "\nDone.\n";
