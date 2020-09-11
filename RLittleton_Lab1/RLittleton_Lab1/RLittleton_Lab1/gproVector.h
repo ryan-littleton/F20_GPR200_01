@@ -117,17 +117,17 @@ inline ostream& operator<<(ostream& out, const vec3& rh) {
 }
 
 // Modified version of - operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 operator-(const vec3& u, const vec3& v) {
+inline vec3 const operator-(const vec3& u, const vec3& v) {
     return vec3(u.x - v.x, u.y - v.y, u.z - v.z);
 }
 
 // Modified version of * operators from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 operator*(double mult, const vec3& rh) {
+inline vec3 const operator*(double mult, const vec3& rh) {
     return vec3(mult * rh.x, mult * rh.y, mult * rh.z);
 }
 
 // Modified version of / operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 operator/(vec3 v, double t) {
+inline vec3 const operator/(vec3 v, double t) {
     return (1 / t) * v;
 }
 
@@ -139,14 +139,14 @@ inline double dot(const vec3& u, const vec3& v) {
 }
 
 // Modified version of cross from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 cross(const vec3& u, const vec3& v) {
+inline vec3 const cross(const vec3& u, const vec3& v) {
     return vec3(u.y * v.z - u.z * v.y,
         u.z * v.x - u.x * v.z,
         u.x * v.y - u.y * v.x);
 }
 
 // Modified version of cross from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 unit_vector(vec3 v) {
+inline vec3 const unit_vector(vec3 v) {
     return v / v.length();
 }
 #endif	// __cplusplus
