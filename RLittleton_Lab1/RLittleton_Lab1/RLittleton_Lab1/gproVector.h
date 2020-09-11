@@ -21,6 +21,8 @@
 	Modified by: Ryan Littleton
 	Modified because: Expanding functionality and typedefs for color
 */
+#include <iostream>
+#include <math.h>
 
 #ifndef _GPRO_VECTOR_H_
 #define _GPRO_VECTOR_H_
@@ -28,6 +30,8 @@
 
 #ifdef __cplusplus
 // DB: link C++ symbols as if they are C where possible
+using namespace std;
+
 extern "C" {
 #else	// !__cplusplus
 // DB: forward declare C types... why?
@@ -42,9 +46,9 @@ typedef union vec3 vec3;
 
 // DB: declare shorthand types
 
-typedef float float3[3];		// 3 floats form the basis of a float vector
-typedef float* floatv;			// generic float vector (pointer)
-typedef float const* floatkv;	// generic constant float vector (pointer)
+typedef double double3[3];		// 3 doubles form the basis of a double vector
+typedef double* doublev;			// generic double vector (pointer)
+typedef double const* doublekv;	// generic constant double vector (pointer)
 
 
 // DB: declare 3D vector
@@ -58,16 +62,15 @@ typedef float const* floatkv;	// generic constant float vector (pointer)
 //		members x, y, z: named components of vector
 union vec3
 {
-	float3 v;
-	struct { float x, y, z; };
+	double3 v;
+	struct { double x, y, z; };
 
 #ifdef __cplusplus
 	// DB: in C++ we can have convenient member functions
 	//	-> e.g. constructors, operators
-
 	explicit vec3();	// default ctor
-	explicit vec3(float const xc, float const yc = 0.0f, float const zc = 0.0f);	// init ctor w one or more floats
-	explicit vec3(float3 const vc);	// copy ctor w generic array of floats
+	explicit vec3(double const xc, double const yc = 0.0f, double const zc = 0.0f);	// init ctor w one or more doubles
+	explicit vec3(double3 const vc);	// copy ctor w generic array of doubles
 	vec3(vec3 const& rh);	// copy ctor
 
 	vec3& operator =(vec3 const& rh);	// assignment operator (copy other to this)
@@ -92,27 +95,72 @@ union vec3
 
     // length from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
     double length() const {
-        return sqrt(length_squared());
+        return sqrt(lengthSquared());
     }
 
-    // Modified version of length from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-    double length_squared() const {
+    // Modified version of length_squared from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+    double lengthSquared() const {
         return x * x + y * y + z * z;
     }
+
+
 #endif	// __cplusplus
 };
 
+// Ryan Littleton
+#ifdef __cplusplus
+// DB: Functions from tutorial here
+
+// Modified version of << operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline ostream& operator<<(ostream& out, const vec3& rh) {
+    return out << rh.x << ' ' << rh.y << ' ' << rh.z;
+}
+
+// Modified version of - operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 operator-(const vec3& u, const vec3& v) {
+    return vec3(u.x - v.x, u.y - v.y, u.z - v.z);
+}
+
+// Modified version of * operators from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 operator*(double mult, const vec3& rh) {
+    return vec3(mult * rh.x, mult * rh.y, mult * rh.z);
+}
+
+// Modified version of / operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 operator/(vec3 v, double t) {
+    return (1 / t) * v;
+}
+
+// Modified version of dot from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline double dot(const vec3& u, const vec3& v) {
+    return u.x * v.x
+        + u.y * v.y
+        + u.z * v.z;
+}
+
+// Modified version of cross from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 cross(const vec3& u, const vec3& v) {
+    return vec3(u.y * v.z - u.z * v.y,
+        u.z * v.x - u.x * v.z,
+        u.x * v.y - u.y * v.x);
+}
+
+// Modified version of cross from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 unit_vector(vec3 v) {
+    return v / v.length();
+}
+#endif	// __cplusplus
 
 // DB: declare C functions (all equivalents of above C++ functions are here)
 //	-> return pointers so you can chain operations (they just take pointers)
 
-floatv vec3default(float3 v_out);	// default init
-floatv vec3init(float3 v_out, float const xc, float const yc, float const zc);	// init w floats
-floatv vec3copy(float3 v_out, float3 const v_rh);	// init w array of floats (same as assign and both copy ctors)
+doublev vec3default(double3 v_out);	// default init
+doublev vec3init(double3 v_out, double const xc, double const yc, double const zc);	// init w doubles
+doublev vec3copy(double3 v_out, double3 const v_rh);	// init w array of doubles (same as assign and both copy ctors)
 
-floatv vec3add(float3 v_lh_sum, float3 const v_rh);	// add other to lh vector
+doublev vec3add(double3 v_lh_sum, double3 const v_rh);	// add other to lh vector
 
-floatv vec3sum(float3 v_sum, float3 const v_lh, float3 const v_rh);	// get sum of lh and rh vector
+doublev vec3sum(double3 v_sum, double3 const v_lh, double3 const v_rh);	// get sum of lh and rh vector
 
 // Ryan Littleton
 #ifdef __cplusplus

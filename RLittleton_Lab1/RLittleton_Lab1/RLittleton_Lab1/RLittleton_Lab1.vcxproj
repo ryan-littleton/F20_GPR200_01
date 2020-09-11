@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="gproVector.h" />
+    <ClInclude Include="ray.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="_inl\gproVector.inl" />

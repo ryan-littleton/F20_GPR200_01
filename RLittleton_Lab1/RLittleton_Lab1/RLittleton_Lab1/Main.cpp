@@ -11,6 +11,7 @@ Assignment : Lab 1
     Modified because: Following the Raytracing in a Weekend tutorial from the link above.
 */
 #include "Color.h" // My other programming classes all had us use uppercase for file names, should I swap to lowercase to match yours going forward?
+#include "ray.h"
 #include "gproVector.h"
 
 #include <iostream>
@@ -18,11 +19,54 @@ Assignment : Lab 1
 
 using namespace std;
 
+// modified hit_sphere from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview 
+// hardcoded sphere for our rays to hit
+double hitSphere(const point3& center, double radius, const ray& r) {
+    vec3 oc = r.origin() - center;
+    double a = dot(r.direction(), r.direction());
+    double b = 2.0 * dot(oc, r.direction());
+    double c = dot(oc, oc) - radius * radius;
+    double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0) {
+        return -1.0;
+    }
+    else {
+        return (-b - sqrt(discriminant)) / (2.0 * a);
+    }
+}
+
+// modified rayColor from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview 
+// creates a color gradient along the vertical
+color rayColor(const ray& r)
+{
+    double t = hitSphere(point3(0, 0, -1), 0.5, r);
+    if (t > 0.0) {
+        vec3 N = unit_vector(r.at(t) - vec3(0, 0, -1));
+        return 0.5 * color(N.x + 1, N.y + 1, N.z + 1);
+    }
+
+    vec3 unitDirection = unit_vector(r.direction());
+    t = 0.5 * (unitDirection.y + 1.0);
+    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+}
+
 int main() {
 
-    // Resolution
-    const int IMAGE_WIDTH = 256;
-    const int IMAGE_HEIGHT = 256;
+    // Resolution, Aspect from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview 
+    const double ASPECT_RATIO = 16.0 / 9.0;
+    const int IMAGE_WIDTH = 400;
+    const int IMAGE_HEIGHT = static_cast<int>(IMAGE_WIDTH / ASPECT_RATIO);
+
+
+    // Camera from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview 
+    double viewportHeight = 2.0;
+    double viewportWidth = ASPECT_RATIO * viewportHeight;
+    double focalLength = 1.0;
+    
+    point3 origin = point3(0, 0, 0);
+    vec3 horizontal = vec3(viewportWidth, 0, 0);
+    vec3 vertical = vec3(0, viewportHeight, 0);
+    vec3 lowerLeftCorner = origin - horizontal / 2 - vertical / 2 - vec3(0, 0, focalLength);
 
     // Initialize output file
     ofstream output; 
@@ -33,12 +77,25 @@ int main() {
 
     // Modified Loop from Peter Shirley, https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
     for (int j = IMAGE_HEIGHT - 1; j >= 0; --j) {
+        cerr << "\rScanlines remaining: " << j << ' ' << flush; // progress indicator
+        for (int i = 0; i < IMAGE_WIDTH; ++i) {
+            double u = double(i) / (double(IMAGE_WIDTH) - 1);
+            double v = double(j) / (double(IMAGE_HEIGHT) - 1);
+            ray r(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
+            color pixelColor = rayColor(r);
+            output << writeColor(pixelColor);
+        }
+    }
+
+    /* Second version of loop
+    for (int j = IMAGE_HEIGHT - 1; j >= 0; --j) {
         cerr << "\rScanlines remaining: " << j << ' ' << flush;
         for (int i = 0; i < IMAGE_WIDTH; ++i) {
             color pixelColor(double(i) / (double(IMAGE_WIDTH) - 1), double(j) / (double(IMAGE_HEIGHT) - 1), 0.25);
             output << writeColor(pixelColor);
         }
     }
+    */
 
     /* Old version of above loop
     for (int j = image_height - 1; j >= 0; --j) {

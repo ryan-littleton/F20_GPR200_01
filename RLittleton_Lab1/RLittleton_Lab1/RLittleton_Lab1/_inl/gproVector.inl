@@ -33,11 +33,11 @@ inline vec3::vec3()
 	: x(0.0f), y(0.0f), z(0.0f)
 {
 }
-inline vec3::vec3(float const xc, float const yc, float const zc)
+inline vec3::vec3(double const xc, double const yc, double const zc)
 	: x(xc), y(yc), z(zc)
 {
 }
-inline vec3::vec3(float3 const vc)
+inline vec3::vec3(double3 const vc)
 	: x(vc[0]), y(vc[1]), z(vc[2])
 {
 }
@@ -67,65 +67,23 @@ inline vec3 const vec3::operator +(vec3 const& rh) const
 	return vec3((x + rh.x), (y + rh.y), (z + rh.z));
 }
 
-// Modified version of << operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline ostream& operator<<(ostream& out, const vec3& rh) {
-	return out << rh.x << ' ' << rh.y << ' ' << rh.z;
-}
-
-// Modified version of - operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 operator-(const vec3& u, const vec3& v) {
-	return vec3(u.x - v.x, u.y - v.y, u.z - v.z);
-}
-
-// Modified version of * operators from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 operator*(double mult, const vec3& rh) {
-	return vec3(mult * rh.x, mult * rh.y, mult * rh.z);
-}
-
-inline vec3 operator*(const vec3& rh, double mult) {
-	return mult * rh;
-}
-
-// Modified version of / operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 operator/(vec3 v, double t) {
-	return (1 / t) * v;
-}
-
-// Modified version of dot from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline double dot(const vec3& u, const vec3& v) {
-	return u.x * v.x
-		+ u.y * v.y
-		+ u.z * v.z;
-}
-
-// Modified version of cross from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 cross(const vec3& u, const vec3& v) {
-	return vec3(u.y * v.z - u.z * v.y,
-		u.z * v.x - u.x * v.z,
-		u.x * v.y - u.y * v.x);
-}
-
-// Modified version of unit_vector from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-inline vec3 unit_vector(vec3 v) {
-	return v / v.length();
-}
 
 #endif	// __cplusplus
 
 
-inline floatv vec3default(float3 v_out)
+inline doublev vec3default(double3 v_out)
 {
 	v_out[0] = v_out[1] = v_out[2] = 0.0f;
 	return v_out;
 }
-inline floatv vec3init(float3 v_out, float const xc, float const yc, float const zc)
+inline doublev vec3init(double3 v_out, double const xc, double const yc, double const zc)
 {
 	v_out[0] = xc;
 	v_out[1] = yc;
 	v_out[2] = zc;
 	return v_out;
 }
-inline floatv vec3copy(float3 v_out, float3 const v_rh)
+inline doublev vec3copy(double3 v_out, double3 const v_rh)
 {
 	v_out[0] = v_rh[0];
 	v_out[1] = v_rh[1];
@@ -133,7 +91,7 @@ inline floatv vec3copy(float3 v_out, float3 const v_rh)
 	return v_out;
 }
 
-inline floatv vec3add(float3 v_lh_sum, float3 const v_rh)
+inline doublev vec3add(double3 v_lh_sum, double3 const v_rh)
 {
 	v_lh_sum[0] += v_rh[0];
 	v_lh_sum[1] += v_rh[1];
@@ -141,7 +99,7 @@ inline floatv vec3add(float3 v_lh_sum, float3 const v_rh)
 	return v_lh_sum;
 }
 
-inline floatv vec3sum(float3 v_sum, float3 const v_lh, float3 const v_rh)
+inline doublev vec3sum(double3 v_sum, double3 const v_lh, double3 const v_rh)
 {
 	return vec3init(v_sum, (v_lh[0] + v_rh[0]), (v_lh[1] + v_rh[1]), (v_lh[2] + v_rh[2]));
 }
