@@ -18,8 +18,8 @@
 	gproVector.h
 	Interface for vectors. Sets an example for C and C++ compatible headers.
 
-	Modified by: ____________
-	Modified because: ____________
+	Modified by: Ryan Littleton
+	Modified because: Expanding usage for the ray tracing lab
 */
 
 #ifdef _GPRO_VECTOR_H_
@@ -65,6 +65,49 @@ inline vec3& vec3::operator +=(vec3 const& rh)
 inline vec3 const vec3::operator +(vec3 const& rh) const
 {
 	return vec3((x + rh.x), (y + rh.y), (z + rh.z));
+}
+
+// Modified version of << operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline ostream& operator<<(ostream& out, const vec3& rh) {
+	return out << rh.x << ' ' << rh.y << ' ' << rh.z;
+}
+
+// Modified version of - operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 operator-(const vec3& u, const vec3& v) {
+	return vec3(u.x - v.x, u.y - v.y, u.z - v.z);
+}
+
+// Modified version of * operators from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 operator*(double mult, const vec3& rh) {
+	return vec3(mult * rh.x, mult * rh.y, mult * rh.z);
+}
+
+inline vec3 operator*(const vec3& rh, double mult) {
+	return mult * rh;
+}
+
+// Modified version of / operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 operator/(vec3 v, double t) {
+	return (1 / t) * v;
+}
+
+// Modified version of dot from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline double dot(const vec3& u, const vec3& v) {
+	return u.x * v.x
+		+ u.y * v.y
+		+ u.z * v.z;
+}
+
+// Modified version of cross from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 cross(const vec3& u, const vec3& v) {
+	return vec3(u.y * v.z - u.z * v.y,
+		u.z * v.x - u.x * v.z,
+		u.x * v.y - u.y * v.x);
+}
+
+// Modified version of unit_vector from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+inline vec3 unit_vector(vec3 v) {
+	return v / v.length();
 }
 
 #endif	// __cplusplus

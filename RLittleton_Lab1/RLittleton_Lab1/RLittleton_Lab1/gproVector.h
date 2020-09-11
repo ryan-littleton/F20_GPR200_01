@@ -76,6 +76,29 @@ union vec3
 
 	vec3 const operator +(vec3 const& rh) const;	// addition operator (get sum of this and another)
 
+    // Not sure why these functions are here and not inlined in the .inl, but I don't want to accidentally break the tutorial so leaving them here for now
+    // Modified version of *= operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+    vec3& operator*=(const double t) {
+        x *= t;
+        y *= t;
+        z *= t;
+        return *this;
+    }
+
+    // /= operator from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+    vec3& operator/=(const double t) {
+        return *this *= 1 / t;
+    }
+
+    // length from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+    double length() const {
+        return sqrt(length_squared());
+    }
+
+    // Modified version of length from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+    double length_squared() const {
+        return x * x + y * y + z * z;
+    }
 #endif	// __cplusplus
 };
 
