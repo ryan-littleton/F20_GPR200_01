@@ -10,7 +10,8 @@ Assignment : Lab 1
     Modified by: Ryan Littleton
     Modified because: Following the Raytracing in a Weekend tutorial from the link above.
 */
-
+#include "Color.h" // My other programming classes all had us use uppercase for file names, should I swap to lowercase to match yours going forward?
+#include "gproVector.h"
 
 #include <iostream>
 #include <fstream>
@@ -20,16 +21,26 @@ using namespace std;
 int main() {
 
     // Resolution
-    const int image_width = 256;
-    const int image_height = 256;
+    const int IMAGE_WIDTH = 256;
+    const int IMAGE_HEIGHT = 256;
 
     // Initialize output file
     ofstream output; 
     output.open("out.ppm");
 
-    // Render
-    output << "P3" << endl << image_width << ' ' << image_height << endl << "255" << endl;
+    // Render to PPM file
+    output << "P3" << endl << IMAGE_WIDTH << ' ' << IMAGE_HEIGHT << endl << "255" << endl;
 
+    // Modified Loop from Peter Shirley, https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
+    for (int j = IMAGE_HEIGHT - 1; j >= 0; --j) {
+        cerr << "\rScanlines remaining: " << j << ' ' << flush;
+        for (int i = 0; i < IMAGE_WIDTH; ++i) {
+            color pixelColor(double(i) / (double(IMAGE_WIDTH) - 1), double(j) / (double(IMAGE_HEIGHT) - 1), 0.25);
+            output << writeColor(pixelColor);
+        }
+    }
+
+    /* Old version of above loop
     for (int j = image_height - 1; j >= 0; --j) {
         cerr << "\rScanlines remaining: " << j << ' ' << flush;
         for (int i = 0; i < image_width; ++i) {
@@ -44,6 +55,7 @@ int main() {
             output << ir << ' ' << ig << ' ' << ib << endl;
         }
     }
+    */
 
     // Done to error stream, close output file
     cerr << "\nDone.\n";
