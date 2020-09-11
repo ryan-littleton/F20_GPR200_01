@@ -16,13 +16,24 @@
 using namespace std;
 
 // Modified version of write_color from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
-string writeColor(color pixColor)
+string writeColor(color pixColor, int samplesPerPixel)
 {
     stringstream out; //Using stringstream so this can output to the file in main
+
+    double r = pixColor.x;
+    double g = pixColor.y;
+    double b = pixColor.z;
+
+    // Divide the color by the number of samples.
+    double scale = 1.0 / samplesPerPixel;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+
     // Write value of each color component
-    out << static_cast<int>(255.999 * pixColor.x) << ' '
-        << static_cast<int>(255.999 * pixColor.y) << ' '
-        << static_cast<int>(255.999 * pixColor.z) << endl;
+    out << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' '
+        << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
+        << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << endl;
 
     return out.str();
 }

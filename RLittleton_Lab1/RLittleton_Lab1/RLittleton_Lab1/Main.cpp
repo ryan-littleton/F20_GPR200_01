@@ -12,6 +12,7 @@ Assignment : Lab 1
 */
 
 #include "rtweekend.h"
+#include "camera.h"
 #include "Color.h" // My other programming classes all had us use uppercase for file names, should I swap to lowercase to match yours going forward?
 #include "hittable_list.h"
 #include "sphere.h"
@@ -40,6 +41,7 @@ int main() {
     const double ASPECT_RATIO = 16.0 / 9.0;
     const int IMAGE_WIDTH = 400;
     const int IMAGE_HEIGHT = static_cast<int>(IMAGE_WIDTH / ASPECT_RATIO);
+    const int SAMPLES_PER_PIXEL = 100;
 
     // World hittables from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview
     hittable_list world;
@@ -47,14 +49,7 @@ int main() {
     world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
 
     // Camera from tutorial https://raytracing.github.io/books/RayTracingInOneWeekend.html#overview 
-    double viewportHeight = 2.0;
-    double viewportWidth = ASPECT_RATIO * viewportHeight;
-    double focalLength = 1.0;
-    
-    point3 origin = point3(0, 0, 0);
-    vec3 horizontal = vec3(viewportWidth, 0, 0);
-    vec3 vertical = vec3(0, viewportHeight, 0);
-    vec3 lowerLeftCorner = origin - horizontal / 2 - vertical / 2 - vec3(0, 0, focalLength);
+    camera cam;
 
     // Initialize output file
     ofstream output; 
@@ -67,11 +62,14 @@ int main() {
     for (int j = IMAGE_HEIGHT - 1; j >= 0; --j) {
         cerr << "\rScanlines remaining: " << j << ' ' << flush; // progress indicator
         for (int i = 0; i < IMAGE_WIDTH; ++i) {
-            double u = double(i) / (double(IMAGE_WIDTH) - 1);
-            double v = double(j) / (double(IMAGE_HEIGHT) - 1);
-            ray r(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
-            color pixelColor = rayColor(r, world);
-            output << writeColor(pixelColor);
+            color pixelColor(0, 0, 0);
+            for (int s = 0; s < SAMPLES_PER_PIXEL; ++s) {
+                double u = (i + random_double()) / (double(IMAGE_WIDTH) - 1);
+                double v = (j + random_double()) / (double(IMAGE_HEIGHT) - 1);
+                ray r = cam.get_ray(u, v);
+                pixelColor += rayColor(r, world);
+            }
+            output << writeColor(pixelColor, SAMPLES_PER_PIXEL);
         }
     }
 
