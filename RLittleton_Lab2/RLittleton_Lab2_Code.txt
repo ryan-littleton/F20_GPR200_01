@@ -1,0 +1,176 @@
+/*
+Author: Ryan Littleton
+Class : GPR-200-01
+Assignment : Lab 2
+*/
+
+// The next function is taken from https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl
+// Modified by Ryan Littleton to be a little more verbose and understandable
+// From my understanding of how gpus work and the notes of the author, these two blocks are optimized for shaders
+// All components are in the range [0…1], including hue.
+vec3 rgb2hsv(in vec3 rgb)
+{
+    vec4 conversions = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(rgb.bg, conversions.wz), vec4(rgb.gb, conversions.xy), step(rgb.b, rgb.g));
+    vec4 q = mix(vec4(p.xyw, rgb.r), vec4(rgb.r, p.yzx), step(p.x, rgb.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+// The next function is taken from https://stackoverflow.com/questions/15095909/from-rgb-to-hsv-in-opengl-glsl
+// Modified by Ryan Littleton to be a little more verbose and understandable
+// All components are in the range [0…1], including hue.
+vec3 hsv2rgb(in vec3 hsv)
+{
+    vec4 conversions = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(hsv.xxx + conversions.xyz) * 6.0 - conversions.www);
+    return hsv.z * mix(conversions.xxx, clamp(p - conversions.xxx, 0.0, 1.0), hsv.y);
+}
+
+// This function doesn't work as intended, as I forgot that everything is done per pixel
+// it still produces a neat effect though, just not the simple color swap I thought it would
+vec3 findOpposite(in vec3 rgb) // Get opposite color
+{
+    vec3 col = hsv2rgb(rgb); // need hue for this
+    float hue = floor(col.x * 255.0); // mult by 255 to get correct value
+    hue = mod((hue + 180.0), 360.0); //formula from https://stackoverflow.com/questions/1165107/how-do-i-invert-a-colour
+    hue /= 255.0; // return to 0-1 range
+    col.x = hue; // change hue
+    col = rgb2hsv(col); // back to rgb
+    
+    return col;
+}
+
+// General use function to set the value (brightness) of an rgb color.
+vec3 setValue(in vec3 rgb, in float value)
+{
+    vec3 temp = rgb2hsv(rgb); // Converts to hsv
+    temp.z = clamp(value, 0.0, 1.0); // Changes value to match, clamped to normal range
+    return hsv2rgb(temp); 
+}
+
+vec4 myEffect0(in vec2 fragCoord, in vec2 resolution)
+{
+    //return vec4(1.0, 0.5, 0.0, 1.0);
+    
+    // Color is 0 to 1, coord is 0 to resolution
+    // RB - horizontal
+    // GA - vertical
+    //return vec4(fragCoord, fragCoord); // This will be white with colored left and bottom, as fragCoord is not clamped to 1
+    
+    // fix red and green only
+    // R - horizontal
+    // G - vertical
+    //return vec4(fragCoord, 0.0, 1.0);
+    
+    // final - red-green gradient
+    // normalizing non 0-1 coords to 0-1 range
+    vec2 uv = fragCoord / resolution.xy;
+    return vec4(uv, 0.5, 1.0);
+    
+    // experimenting
+    //vec2 uv = fragCoord / resolution.xy;
+    //vec3 col = rgb2hsv(vec3(uv, 0.5));
+    //col.z = 0.9;
+    //col = hsv2rgb(col);
+	//return vec4(col, 1.0);
+    
+}
+
+vec4 myEffect1(in vec2 fragCoord, in vec2 resolution)
+{
+    // used this tutorial to help https://stackoverflow.com/questions/4694608/glsl-checkerboard-pattern
+    vec2 uv = fragCoord / resolution.xx; // Using .xx to make sure the checkers are square
+    float xNumCheckers = 10.0; // The number of checkers along the x axis
+    float moduloResult = mod(floor(xNumCheckers * uv.x) + floor(xNumCheckers * uv.y), 2.0); // Modulus to determine which color
+    
+    float result = max(sign(moduloResult), 0.0); // Sign to get the final color
+ 
+    return vec4(result, result, result, 1.0); // return final vec4
+}
+
+vec4 myEffect2(in vec2 fragCoord, in vec2 resolution, in float time)
+{
+    float circleSize = 200.0 + sin(time) * 75.0; // randomly changing circle size
+    vec2 uv = fragCoord / resolution.xy; // coordinates within 200 pixel circle
+    vec2 circleVec2 = fragCoord / vec2(circleSize); // coordinates within 200 pixel circle
+    float final = 0.0; // float for our final result
+    vec3 color = vec3(0.0); // to store final vec3 color
+    
+    vec2 center = vec2(resolution.x / 2.0, resolution.y / 2.0); // Get center
+    
+    final = distance(fragCoord, center); // Use distance to get distance to center
+
+    color = vec3(1.0 - (final / circleSize)); // one minus to get bright center, dark edges
+        
+    color = rgb2hsv(color); // convert to hsv for easier hue changing
+    color.x += sin(time / 3.0); // change hue over time
+    color.y = 1.0; // set saturation to max
+    color = hsv2rgb(color); // convert back to rgb for returning
+    
+    if (final <= circleSize) // if distance to center is under circelSize
+    {
+        return vec4(color, 1.0); // return final vec4
+    }
+    else color = vec3(0.0); // sets outside to opposite
+    
+    return vec4(color, 1.0); // return final vec4
+}
+
+vec4 myEffect3(in vec2 fragCoord, in vec2 resolution, in float time)
+{
+    float circleSize = 30.0 + sin(time) * 75.0; // randomly changing circle size
+    vec2 uv = fragCoord / resolution.xy; // coordinates within 200 pixel circle
+    vec2 circleVec2 = fragCoord / vec2(circleSize); // coordinates within 200 pixel circle
+    float final = 0.0; // float for our final result
+    vec3 color = vec3(0.0); // to store final vec3 color
+    
+    vec2 center = vec2(resolution.x / 2.0, resolution.y / 2.0); // Get center
+    
+    final = distance(fragCoord , center + sin(time) * 400.0); // Use distance to get distance to center, offset center
+
+    color = vec3(1.0 - (final / circleSize)); // one minus to get bright center, dark edges
+    color += vec3(sin(time)); // changes size, intensity over time
+        
+    color = rgb2hsv(color); // convert to hsv for easier hue changing
+    color.x += sin(time * 3.0); // change hue over time
+    color.y = 1.0 + sin(time); // set saturation to max, plus sin time
+    color = hsv2rgb(color); // convert back to rgb for returning
+    
+    if (final <= circleSize * 2.0) // if distance to center is under circelSize
+    {
+        return vec4(color, 1.0); // return final vec4
+    }
+    else color = findOpposite(color); // sets outside to opposite
+    
+    return vec4(color, 1.0); // return final vec4
+}
+
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    //vec2 uv = fragCoord/iResolution.xy;
+
+    // Time varying pixel color
+    //vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+
+    // Output to screen
+    //fragColor = vec4(col,1.0);
+    
+    fragColor = myEffect0(fragCoord, iResolution.xy);
+    
+    //fragColor = myEffect1(fragCoord, iResolution.xy);
+
+    //fragColor = myEffect2(fragCoord, iResolution.xy, iTime);
+    
+    //fragColor = myEffect3(fragCoord, iResolution.xy, iTime);
+    
+}
+
+// Reminder: Colors range from 0-1 here, not 255.
+
+// Reference for RGB to HSL Conversion: https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
+// Cool reference on a bunch of shader math for shapes https://thebookofshaders.com/07/
