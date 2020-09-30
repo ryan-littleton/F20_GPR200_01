@@ -111,7 +111,7 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
     sSphere sphere;
     initSphere(sphere, vec3(0.0, 0.0, -4.0), 0.5);
     pointLight light;
-    initPointLight(light, vec3(-3.0, -2.0, -6.0), vec4(1.0), 0.5);
+    initPointLight(light, vec3(8.0, 4.0, 2.0), vec4(1.0), 0.5);
     
     // Testing procedural sphere
     vec3 dp;
@@ -134,7 +134,7 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
         
         //Time for diffuse lighting - based off of the Blue Book tutorial
         vec3 vLightDir;
-        vLightDir = position - light.center.xyz;
+        vLightDir = light.center.xyz - position;
         
         vLightDir = normalize(vLightDir);
         
