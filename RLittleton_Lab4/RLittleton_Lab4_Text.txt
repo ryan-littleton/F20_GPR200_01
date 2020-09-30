@@ -60,6 +60,20 @@ void calcRay(out vec4 rayDirection, out vec4 rayOrigin,
     // w = 0 because it represents a direction; can ignore when using
     rayDirection = asOffset(viewport - eyePosition);
 }
+    
+struct pointLight
+{
+    vec4 center;
+    vec4 color;
+    float intensity;
+};
+    
+void initPointLight(out pointLight light, in vec3 center, in vec4 color, in float intensity)
+{
+    light.center = asPoint(center);
+    light.color = color;
+    light.intensity = intensity;
+}
 
 struct sSphere
 {
@@ -96,6 +110,8 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
     // SCENE
     sSphere sphere;
     initSphere(sphere, vec3(0.0, 0.0, -4.0), 0.5);
+    pointLight light;
+    initPointLight(light, vec3(0.0, 2.0, 0.0), vec4(1.0), 1.0);
     
     // Testing procedural sphere
     vec3 dp;
