@@ -131,12 +131,10 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
     sSphere sphere;
     initSphere(sphere, vec3(0.0, 0.0, -4.0), 0.5);
     
-    pointLight[3] lights;
-    for (int i = lights.length() - 1; i > 0; i--)
-    {
-        initPointLight(lights[i], vec3(8.0, 4.0, 5.0), vec4(1.0), 30.0);
-    }
-    
+    pointLight[3] lights; // Multiple lights
+    initPointLight(lights[0], vec3(12.0, 6.0, 5.0), vec4(1.0), 30.0);
+    initPointLight(lights[1], vec3(0.0, 10.0, 5.0), vec4(1.0), 30.0);
+    initPointLight(lights[2], vec3(-8.0, -4.0, 5.0), vec4(1.0), 30.0);
     
     // Testing procedural sphere
     vec3 dp;
@@ -176,6 +174,8 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
         //vec3 finalColor = (finalDiffuse * normal) * light.color.rgb;
         //return vec4(finalColor, 1.0); // Final lambertian
         
+        vec3 surfaceColor = normal; // Set surface color to normal for gradient
+        vec3 specReflectColor = vec3(1.0);
         vec3 vView = normalize(rayOrigin.xyz - position); // view vector
         //vec3 vReflectLight = reflect(-vLightDir, normal); // Reflected light vector
         
@@ -191,16 +191,20 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
         //vec3 finalPhong = ambientIntensity * ambientColor + (finalColor + specIntensity * light.color.xyz) * light.color.xyz;
 		//return vec4(finalPhong, 1.0);
         
-        float fReflectTotal = 0.0; // This will keep track of the total of all light influence
+        vec3 vReflectTotal = vec3(0.0); // This will keep track of the total of all light influence
         
-        for(int i = lights.length() - 1; i > 0; i--)
+        for(int i = lights.length() - 1; i >= 0; i--)
         {
             float fDiffuseIntensity;
         	float fSpecIntensity;
             
-            calcLights(fDiffuseIntensity, fSpecIntensity, normal, position, vView, lights[i]);
-            fReflectTotal += 
+            calcLight(fDiffuseIntensity, fSpecIntensity, normal, position, vView, lights[i]);
+            vReflectTotal += (fDiffuseIntensity * surfaceColor + fSpecIntensity * specReflectColor) *
+                			lights[i].color.xyz;
         }
+        
+        vec3 finalColor = ambientIntensity * ambientColor + vReflectTotal;
+        return vec4(finalColor, 1.0);
     }
     
 	// BACKGROUND
