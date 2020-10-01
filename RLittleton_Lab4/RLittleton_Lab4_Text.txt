@@ -111,7 +111,7 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
     sSphere sphere;
     initSphere(sphere, vec3(0.0, 0.0, -4.0), 0.5);
     pointLight light;
-    initPointLight(light, vec3(8.0, 4.0, 2.0), vec4(1.0), 0.5);
+    initPointLight(light, vec3(8.0, 4.0, 5.0), vec4(1.0), 30.0);
     
     // Testing procedural sphere
     vec3 dp;
@@ -139,7 +139,14 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
         vLightDir = normalize(vLightDir);
         
         float fDotProduct = max(0.0, dot(normal, vLightDir));
-        return vec4(vec3(fDotProduct), 1.0);
+        //return vec4(vec3(fDotProduct), 1.0);
+        
+        float distanceToLight = distance(light.center.xyz, position);
+        
+        float aIntensity = 1.0/(1.0 + distanceToLight / light.intensity + (distanceToLight * distanceToLight) / (light.intensity * light.intensity));
+        
+        return vec4(vec3(fDotProduct * aIntensity), 1.0);
+
     }
     
 	// BACKGROUND
