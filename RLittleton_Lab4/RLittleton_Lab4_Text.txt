@@ -139,13 +139,19 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
         vLightDir = normalize(vLightDir);
         
         float fDotProduct = max(0.0, dot(normal, vLightDir));
-        //return vec4(vec3(fDotProduct), 1.0);
+        //return vec4(vec3(fDotProduct), 1.0); //Diffuse
         
         float distanceToLight = distance(light.center.xyz, position);
         
         float aIntensity = 1.0/(1.0 + distanceToLight / light.intensity + (distanceToLight * distanceToLight) / (light.intensity * light.intensity));
         
-        return vec4(vec3(fDotProduct * aIntensity), 1.0);
+        vec3 finalDiffuse = vec3(fDotProduct * aIntensity);
+        //return vec4(vec3(fDotProduct * aIntensity), 1.0); // Diffuse attenuation
+        
+        vec3 finalColor = (finalDiffuse * normal) * light.color.rgb;
+        return vec4(finalColor, 1.0);
+        
+        
 
     }
     
