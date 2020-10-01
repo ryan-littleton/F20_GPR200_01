@@ -1,3 +1,9 @@
+/*
+Author: Ryan Littleton - using starter from Daniel Buckstein
+Class : GPR-200-01
+Assignment : Lab 4
+*/
+
 // GLSL STARTER CODE BY DANIEL S. BUCKSTEIN
 
 // asPoint: promote a 3D vector into a 4D vector representing a point (w=1)
@@ -61,6 +67,7 @@ void calcRay(out vec4 rayDirection, out vec4 rayOrigin,
     rayDirection = asOffset(viewport - eyePosition);
 }
     
+// holds point light data
 struct pointLight
 {
     vec4 center;
@@ -68,6 +75,7 @@ struct pointLight
     float intensity;
 };
     
+// inits the point light
 void initPointLight(out pointLight light, in vec3 center, in vec4 color, in float intensity)
 {
     light.center = asPoint(center);
@@ -75,44 +83,56 @@ void initPointLight(out pointLight light, in vec3 center, in vec4 color, in floa
     light.intensity = intensity;
 }
 
+// calcLight: calculates specular and diffuse for the light passed in
+//    fDiffuseIntensity: output for the diffuse
+//    fSpecIntensity:    output for the specular
+//	  normal: 			 input for sphere normal
+//	  position: 		 input for position on sphere
+//	  normal: 			 input for view vector
+//	  normal: 			 input for the current light
 void calcLight(out float fDiffuseIntensity, out float fSpecIntensity, in vec3 normal, in vec3 position, in vec3 vView, in pointLight light)
 {
+    // Light direction to position
     vec3 vLightDir;
     vLightDir = light.center.xyz - position;
     vLightDir = normalize(vLightDir);
     
+    // diffuse coefficient
     float fDiffuseCoef = max(0.0, dot(normal, vLightDir));
-    
     float fDistanceToLight = distance(light.center.xyz, position);
 
+    // attenuation
     float fAIntensity = 1.0/(1.0 + fDistanceToLight / light.intensity + (fDistanceToLight * fDistanceToLight) / (light.intensity * light.intensity));
 
-    fDiffuseIntensity = fDiffuseCoef * fAIntensity;
+    fDiffuseIntensity = fDiffuseCoef * fAIntensity; // Final diffuse intensity
                 
-    vec3 vHalfway = normalize(vLightDir + vView);
+    vec3 vHalfway = normalize(vLightDir + vView); // Halfway vector
     float fSpecCoef = max(0.0, dot(normal, vHalfway)); // Spec coefficient Blinn-phong
-    float fHiExp = 32.0; // Highlight exponent
+    float fHiExp = 64.0; // Highlight exponent
     fSpecIntensity = pow(fSpecCoef, fHiExp * 4.0); // Blinn-Phong
 }
 
+// holds sphere data
 struct sSphere
 {
     vec4 center;
     float radius;
 };
 
+// init sphere and check if it's valid
 bool initSphere(out sSphere sphere, in vec3 center, in float radius)
 {
     sphere.center = asPoint(center);
-    if (radius > 0.0)
+    if (radius > 0.0) // Checks if radius is valid
     {
     	sphere.radius = radius;
 		return true;
     }
-    sphere.radius = 1.0;
+    sphere.radius = 1.0; // If not valid, set to 1
     return false;
 }
 
+//get dot product of x
 float lenSq(vec2 x)
 {
     return dot(x, x);
@@ -121,6 +141,7 @@ float lenSq(vec2 x)
 // calcColor: calculate the color of a pixel given a ray
 //    rayDirection: input ray direction
 //    rayOrigin:    input ray origin
+//	  time: 		iTime passed in from mainImage for animating lights
 vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin, in float time)
 {
     // DUMMY RESULT: OUTPUT RAY DIRECTION AS-IS
@@ -132,83 +153,51 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin, in float time)
     initSphere(sphere, vec3(0.0, 0.0, -4.0), 0.5);
     
     pointLight[3] lights; // Multiple lights
-    initPointLight(lights[0], vec3(22.0 * sin(time), 6.0, -5.0), vec4(1.0), 30.0);
+    initPointLight(lights[0], vec3(22.0 * sin(time), 6.0, -5.0), vec4(1.0), 30.0); // Mult by sin time to animate
     initPointLight(lights[1], vec3(0.0, 20.0 * cos(time), 5.0), vec4(1.0), 30.0);
     initPointLight(lights[2], vec3(-18.0 * sin(time), -4.0 * sin(time), -5.0), vec4(1.0), 30.0);
     
-    // Testing procedural sphere
+    // Procedural sphere
     vec3 dp;
     dp.xy = rayDirection.xy - sphere.center.xy;
     float lSq = lenSq(dp.xy), rSq = sphere.radius * sphere.radius;
     
     if (lSq <= rSq)
     {
-        //return vec4(0.0, 1.0, 1.0, 1.0);
-        //dp.z = (sphere.radius * sphere.radius) - 
-            //(dp.x * dp.x + dp.y * dp.y); // this is actually dz_sq
+        dp.z = rSq - lSq; // this is actually dp.z squared
         
-        dp.z = rSq - lSq;
+        vec3 position = sphere.center.xyz + vec3(dp.x, dp.y, sqrt(dp.z)); // position on sphere
         
-        vec3 position = sphere.center.xyz + vec3(dp.x, dp.y, sqrt(dp.z));
-        
-        vec3 normal = (position - sphere.center.xyz) / sphere.radius;
-            //normalize(position - sphere.center.xyz); // not optimized
-        //return vec4(normal * 0.5 + 0.5, 1.0); // Old Return
-        
-        //Time for diffuse lighting - based off of the Blue Book tutorial
-        //vec3 vLightDir;
-        //vLightDir = light.center.xyz - position;
-        
-        //vLightDir = normalize(vLightDir);
-        
-        //float fDotProduct = max(0.0, dot(normal, vLightDir));
-        //return vec4(vec3(fDotProduct), 1.0); //Diffuse
-        
-        //float distanceToLight = distance(light.center.xyz, position);
-        
-        //float aIntensity = 1.0/(1.0 + distanceToLight / light.intensity + (distanceToLight * distanceToLight) / (light.intensity * light.intensity));
-        
-        //vec3 finalDiffuse = vec3(fDotProduct * aIntensity);
-        //return vec4(vec3(fDotProduct * aIntensity), 1.0); // Diffuse attenuation
-        
-        //vec3 finalColor = (finalDiffuse * normal) * light.color.rgb;
-        //return vec4(finalColor, 1.0); // Final lambertian
+        vec3 normal = (position - sphere.center.xyz) / sphere.radius; // optimized normal calc
         
         vec3 surfaceColor = normal; // Set surface color to normal for gradient
         vec3 specReflectColor = vec3(1.0);
         vec3 vView = normalize(rayOrigin.xyz - position); // view vector
-        //vec3 vReflectLight = reflect(-vLightDir, normal); // Reflected light vector
+        //vec3 vReflectLight = reflect(-vLightDir, normal); // Reflected light vector - not needed for blinn phong
         
-        //vec3 vHalfway = normalize(vLightDir + vView);
-        //float specCoef = max(0.0, dot(vView, vReflectLight)); // spec coefficient Phong
-        //float specCoef = max(0.0, dot(normal, vHalfway)); // Spec coefficient Blinn-phong
-        //float hiExp = 32.0; // Highlight exponent
-        //float specIntensity = pow(specCoef, hiExp); // Phong
-        //float specIntensity = pow(specCoef, hiExp * 4.0); // Blinn-Phong
         float ambientIntensity = 0.1; // ambient light
         vec3 ambientColor = vec3(0.7, 0.2, 1.0); // global ambient light color
         
-        //vec3 finalPhong = ambientIntensity * ambientColor + (finalColor + specIntensity * light.color.xyz) * light.color.xyz;
-		//return vec4(finalPhong, 1.0);
-        
         vec3 vReflectTotal = vec3(0.0); // This will keep track of the total of all light influence
         
+        // Loop for calculating lights
         for(int i = lights.length() - 1; i >= 0; i--)
         {
-            float fDiffuseIntensity;
-        	float fSpecIntensity;
+            float fDiffuseIntensity; // diffuse for current light
+        	float fSpecIntensity; // specular for current light
             
-            calcLight(fDiffuseIntensity, fSpecIntensity, normal, position, vView, lights[i]);
+            calcLight(fDiffuseIntensity, fSpecIntensity, normal, position, vView, lights[i]); // calc from light
+            
             vReflectTotal += (fDiffuseIntensity * surfaceColor + fSpecIntensity * specReflectColor) *
-                			lights[i].color.xyz;
+                			lights[i].color.xyz; // Add the current light calc to the sum
         }
         
-        vec3 finalColor = ambientIntensity * ambientColor + vReflectTotal;
-        return vec4(finalColor, 1.0);
+        vec3 finalColor = ambientIntensity * ambientColor + vReflectTotal; // final color from ambient and lights
+        return vec4(finalColor, 1.0); // to vec4 and return
     }
     
 	// BACKGROUND
-	const vec3 warm = vec3(0.8, 0.4, 0.2), cool = vec3(0.2, 0.4, 0.8);
+	const vec3 warm = vec3(0.7, 0.2, 0.3), cool = vec3(0.3, 0.2, 0.7);
 	return vec4(mix(warm, cool, rayDirection.y), 1.0);
 }
 
