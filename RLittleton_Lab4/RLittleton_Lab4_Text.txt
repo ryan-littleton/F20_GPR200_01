@@ -121,7 +121,7 @@ float lenSq(vec2 x)
 // calcColor: calculate the color of a pixel given a ray
 //    rayDirection: input ray direction
 //    rayOrigin:    input ray origin
-vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
+vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin, in float time)
 {
     // DUMMY RESULT: OUTPUT RAY DIRECTION AS-IS
     //  -> what does the ray look like as color?
@@ -132,9 +132,9 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
     initSphere(sphere, vec3(0.0, 0.0, -4.0), 0.5);
     
     pointLight[3] lights; // Multiple lights
-    initPointLight(lights[0], vec3(12.0, 6.0, 5.0), vec4(1.0), 30.0);
-    initPointLight(lights[1], vec3(0.0, 10.0, 5.0), vec4(1.0), 30.0);
-    initPointLight(lights[2], vec3(-8.0, -4.0, 5.0), vec4(1.0), 30.0);
+    initPointLight(lights[0], vec3(22.0 * sin(time), 6.0, -5.0), vec4(1.0), 30.0);
+    initPointLight(lights[1], vec3(0.0, 20.0 * cos(time), 5.0), vec4(1.0), 30.0);
+    initPointLight(lights[2], vec3(-18.0 * sin(time), -4.0 * sin(time), -5.0), vec4(1.0), 30.0);
     
     // Testing procedural sphere
     vec3 dp;
@@ -235,5 +235,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     	             fragCoord, iResolution.xy);
     calcRay(rayDirection, rayOrigin, vec3(0.0), viewport);
     
-    fragColor += calcColor(rayDirection, rayOrigin);
+    fragColor += calcColor(rayDirection, rayOrigin, iTime);
 }
