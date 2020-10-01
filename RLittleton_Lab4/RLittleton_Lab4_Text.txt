@@ -154,9 +154,12 @@ vec4 calcColor(in vec4 rayDirection, in vec4 rayOrigin)
         vec3 vView = normalize(rayOrigin.xyz - position); // view vector
         vec3 vReflectLight = reflect(-vLightDir, normal); // Reflected light vector
         
-        float specCoef = max(0.0, dot(vView, vReflectLight)); // spec coefficient
-        float hiExp = 16.0; // Highlight exponent
-        float specIntensity = pow(specCoef, hiExp);
+        vec3 vHalfway = normalize(vLightDir + vView);
+        //float specCoef = max(0.0, dot(vView, vReflectLight)); // spec coefficient Phong
+        float specCoef = max(0.0, dot(normal, vHalfway)); // Spec coefficient Blinn-phong
+        float hiExp = 32.0; // Highlight exponent
+        //float specIntensity = pow(specCoef, hiExp); // Phong
+        float specIntensity = pow(specCoef, hiExp * 4.0); // Blinn-Phong
         float ambientIntensity = 0.1; // ambient light
         vec3 ambientColor = vec3(0.7, 0.2, 1.0); // global ambient light color
         
