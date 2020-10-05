@@ -169,6 +169,13 @@ void initRayOrtho(out sRay ray,
 //------------------------------------------------------------
 // RENDERING FUNCTIONS
 
+sCoord wave(in sCoord origLoc)
+{
+    sCoord deformedLoc;
+    // do something
+    return deformedLoc;
+}
+
 // calcColor: calculate the color of current pixel
 //	  vp:  input viewport info
 //	  ray: input ray info
@@ -189,9 +196,24 @@ color4 calcColor(in sViewport vp, in sRay ray)
     sScalar ratio = res.y * vp.resolutionInv.y;
     sCoord loc = px / res; // relative to texture
     //loc = 1.2 * loc; // Zoom
-    loc = ratio * (loc + 0.5); // Zoom scalar + shift
-    //return texture(iChannel0, loc); Full RGBA
-    return texture(iChannel0, loc).rrrr; // greyscale
+    //loc = ratio * (loc + 0.5); // Zoom scalar + shift
+    loc = ratio * loc + 0.1 * iTime; // Zoom scalar + animated shift
+    //return texture(iChannel0, loc); //Full RGBA
+    //return texture(iChannel0, loc).rrrr; // greyscale
+    
+    //test surface pos and norm
+    //return vec4(vp.viewportPoint); // position
+    //return vec4(0.0, 0.0, 1.0, 1.0); // blue norm on z
+    //return vec4(normalize(vec3(vp.viewportPoint.xy, 1.0)), 1.0); // Bended normal
+    
+    // cube map
+    // sampler type: samplerCube
+    vec3 cubeLoc = ray.direction.xyz; // cubemap sample vector
+    // 3D rotation matrix
+    //cubeLoc = rot * cubeLoc;
+    //return vec4(cubeLoc, 1.0);
+    return texture(iChannel1, cubeLoc);
+    
 }
 
 //------------------------------------------------------------
