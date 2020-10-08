@@ -176,6 +176,24 @@ sCoord wave(in sCoord origLoc)
     return deformedLoc;
 }
 
+// crossFade: fades between two textures based on time
+//	  vp:  Viewport to calc resolution
+//	  fTime: time passed in for animation
+vec4 crossfade(in sViewport vp, in float fTime)
+{
+    // Calc loc for 1st texture
+    sCoord px = vp.pixelCoord;
+    sDCoord res = iChannelResolution[0].xy;
+    sCoord loc1 = px / res;
+    
+    // Calc loc for 2nd texture
+    sDCoord res2 = iChannelResolution[2].xy;
+    sCoord loc2 = px / res2;
+    
+    float fSmoothTime = abs(sin(fTime) * 0.5 + 0.5); // Smoothly animating time
+    return mix(texture(iChannel0, loc1), texture(iChannel2, loc2), fSmoothTime); // Crossfade between two textures
+}
+
 // calcColor: calculate the color of current pixel
 //	  vp:  input viewport info
 //	  ray: input ray info
@@ -191,19 +209,17 @@ color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
     // texture (full-screen);
     //sampler2D tex = iChannel0; This is illegal
     //sCoord loc = vp.uv; // relative to display
-    sCoord px = vp.pixelCoord;
-    sDCoord res = iChannelResolution[0].xy;
-    sScalar ratio = res.y * vp.resolutionInv.y;
-    sCoord loc = px / res; // relative to texture
+    //sCoord px = vp.pixelCoord;
+    //sDCoord res = iChannelResolution[0].xy;
+    //sScalar ratio = res.y * vp.resolutionInv.y;
+    //sCoord loc = px / res; // relative to texture
     //loc = 1.2 * loc; // Zoom
     //loc = ratio * (loc + 0.5); // Zoom scalar + shift
     //loc = ratio * loc + 0.1 * iTime; // Zoom scalar + animated shift
     //return texture(iChannel0, loc); //Full RGBA
     //return texture(iChannel0, loc).rrrr; // greyscale
     
-    float fSmoothTime = abs(sin(fTime) * 0.5 + 0.5); // Smoothly animating time
-    
-    return mix(texture(iChannel0, loc), texture(iChannel2, loc), fSmoothTime); // Crossfade
+    return crossfade(vp, fTime);
     
     //test surface pos and norm
     //return vec4(vp.viewportPoint); // position
