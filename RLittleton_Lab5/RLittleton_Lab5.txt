@@ -169,7 +169,7 @@ void initRayOrtho(out sRay ray,
 //------------------------------------------------------------
 // RENDERING FUNCTIONS
 
-// distort: creates a waveish distortion effect
+// distort: creates a sin tunnel distortion effect
 //	  origLoc:  2D coordinates
 //	  fTime: time passed in for animation
 sCoord distort(in sCoord origLoc, in float fTime)
@@ -205,6 +205,65 @@ mat4 rotationZ( in float angle ) {
 							0,				0,		1,	0,
 							0,				0,		0,	1);
 }
+
+// Lighting functions from my lab 4
+// holds point light data
+struct pointLight
+{
+    vec4 center;
+    vec4 color;
+    float intensity;
+};
+    
+// inits the point light
+void initPointLight(out pointLight light, in vec3 center, in vec4 color, in float intensity)
+{
+    light.center = asPoint(center);
+    light.color = color;
+    light.intensity = intensity;
+}
+
+// calcLight: calculates specular and diffuse for the light passed in
+//	  light: 			 input for the current light
+//	  surfaceColor: 	 input for color
+//	  normal: 			 input for normal
+//	  position: 		 input for position on sphere
+//	  vView: 	 		 input for view vector
+vec4 calcLight(in pointLight light, in color4 surfaceColor, in vec3 normal, in vec3 position, in vec3 vView)
+{
+    
+    // Light direction to position
+    vec3 vLightDir;
+    vLightDir = light.center.xyz - position;
+    vLightDir = normalize(vLightDir);
+    
+    // diffuse coefficient
+    float fDiffuseCoef = max(0.0, dot(normal, vLightDir));
+    float fDistanceToLight = distance(light.center.xyz, position);
+
+    // attenuation
+    float fAIntensity = 1.0/(1.0 + fDistanceToLight / light.intensity + (fDistanceToLight * fDistanceToLight) / (light.intensity * light.intensity));
+
+    float fDiffuseIntensity = fDiffuseCoef * fAIntensity; // Final diffuse intensity
+                
+    vec3 vHalfway = normalize(vLightDir + vView); // Halfway vector
+    float fSpecCoef = max(0.0, dot(normal, vHalfway)); // Spec coefficient Blinn-phong
+    float fHiExp = 64.0; // Highlight exponent
+    float fSpecIntensity = pow(fSpecCoef, fHiExp * 4.0); // Blinn-Phong
+    vec3 specReflectColor = vec3(1.0);
+    float ambientIntensity = 0.1;
+    color3 ambientColor = color3(1.0);
+    
+    light.color.xyz; // Add the current light calc to the sum
+    
+    vec3 vReflectTotal = (fDiffuseIntensity * surfaceColor.xyz + fSpecIntensity * specReflectColor) *
+                light.color.xyz;
+
+        
+    vec3 finalColor = ambientIntensity * ambientColor + vReflectTotal; // final color from ambient and lights
+    return vec4(finalColor, 1.0); // to vec4 and return
+}
+
 
 // crossfade: fades between two textures based on time
 //	  vp:  Viewport to calc resolution
@@ -245,6 +304,9 @@ vec4 cubemap(in sRay ray, in float fTime)
 //	  ray: input ray info
 color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
 {
+    //Lights
+    pointLight light1;
+    initPointLight(light1, ray.origin.xyz, vec4(1.0), 8.0);
     // test inputs
     //return color4(ray.direction.xyz == vp.viewportPoint.xyz); // pass
     //return color4(lengthSq(vp.viewportPoint.xy) >= 0.25); // pass
@@ -254,7 +316,7 @@ color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
     
     // texture (full-screen);
     //sampler2D tex = iChannel0; This is illegal
-    //sCoord loc = vp.uv; // relative to display
+    sCoord loc = vp.uv; // relative to display
     //sCoord px = vp.pixelCoord;
     //sDCoord res = iChannelResolution[0].xy;
     //sScalar ratio = res.y * vp.resolutionInv.y;
@@ -265,12 +327,17 @@ color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
     //return texture(iChannel0, loc); //Full RGBA
     //return texture(iChannel0, loc).rrrr; // greyscale
     
-    return crossfade(vp, fTime);
+    //return crossfade(vp, fTime); // final crossfade
+    
+    vec3 position = vec3(loc.xy, -5.0); // adding a z coord for the plane
+    vec3 vView = normalize(ray.origin.xyz - ray.direction.xyz); // view vector
     
     //test surface pos and norm
     //return vec4(vp.viewportPoint); // position
     //return vec4(0.0, 0.0, 1.0, 1.0); // blue norm on z
-    //return vec4(normalize(vec3(vp.viewportPoint.xy, 1.0)), 1.0); // Bended normal
+    vec3 normal = normalize(vec3(vp.viewportPoint.xy, 1.0)); // Bended normal
+    vec4 surfaceCol = crossfade(vp, fTime);
+    return calcLight(light1, surfaceCol, normal, position, vView);
     
     // cube map
     // sampler type: samplerCube
