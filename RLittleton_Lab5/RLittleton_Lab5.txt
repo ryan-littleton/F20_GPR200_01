@@ -304,51 +304,21 @@ vec4 cubemap(in sRay ray, in float fTime)
 //	  ray: input ray info
 color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
 {
+    
+    //return crossfade(vp, fTime); // final crossfade
+    
     //Lights
     pointLight light1;
     initPointLight(light1, ray.origin.xyz, vec4(1.0), 8.0);
-    // test inputs
-    //return color4(ray.direction.xyz == vp.viewportPoint.xyz); // pass
-    //return color4(lengthSq(vp.viewportPoint.xy) >= 0.25); // pass
-    //return color4(vp.uv, 0.0, 0.0);
-    //return color4(vp.ndc, 0.0, 0.0);
-    //return vp.viewportPoint;
     
-    // texture (full-screen);
-    //sampler2D tex = iChannel0; This is illegal
-    sCoord loc = vp.uv; // relative to display
-    //sCoord px = vp.pixelCoord;
-    //sDCoord res = iChannelResolution[0].xy;
-    //sScalar ratio = res.y * vp.resolutionInv.y;
-    //sCoord loc = px / res; // relative to texture
-    //loc = 1.2 * loc; // Zoom
-    //loc = ratio * (loc + 0.5); // Zoom scalar + shift
-    //loc = ratio * loc + 0.1 * iTime; // Zoom scalar + animated shift
-    //return texture(iChannel0, loc); //Full RGBA
-    //return texture(iChannel0, loc).rrrr; // greyscale
-    
-    //return crossfade(vp, fTime); // final crossfade
+    sCoord loc = vp.uv; // loc relative to display
     
     vec3 position = vec3(loc.xy, -5.0); // adding a z coord for the plane
     vec3 vView = normalize(ray.origin.xyz - ray.direction.xyz); // view vector
     
-    //test surface pos and norm
-    //return vec4(vp.viewportPoint); // position
-    //return vec4(0.0, 0.0, 1.0, 1.0); // blue norm on z
     vec3 normal = normalize(vec3(vp.viewportPoint.xy, 1.0)); // Bended normal
-    vec4 surfaceCol = crossfade(vp, fTime);
-    return calcLight(light1, surfaceCol, normal, position, vView);
-    
-    // cube map
-    // sampler type: samplerCube
-    //vec4 cubeLoc = vec4(ray.direction.xyz, 1.0); // cubemap sample vector
-    //cubeLoc.x += 0.5 * sin(fTime);
-    //cubeLoc *= rotationY(fTime);
-    // 3D rotation matrix
-    //cubeLoc = rot * cubeLoc;
-    //return vec4(cubeLoc, 1.0);
-    //return texture(iChannel1, cubeLoc.xyz);
-    //return mix(texture(iChannel1, cubeLoc), vec4(cubeLoc, 1.0), 0.5);
+    vec4 surfaceCol = crossfade(vp, fTime); // Using the crossfade as color
+    return calcLight(light1, surfaceCol, normal, position, vView); // Final Lights
     
     //return cubemap(ray, fTime); // cubemap rotating
     
