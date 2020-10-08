@@ -179,7 +179,7 @@ sCoord wave(in sCoord origLoc)
 // calcColor: calculate the color of current pixel
 //	  vp:  input viewport info
 //	  ray: input ray info
-color4 calcColor(in sViewport vp, in sRay ray)
+color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
 {
     // test inputs
     //return color4(ray.direction.xyz == vp.viewportPoint.xyz); // pass
@@ -197,9 +197,13 @@ color4 calcColor(in sViewport vp, in sRay ray)
     sCoord loc = px / res; // relative to texture
     //loc = 1.2 * loc; // Zoom
     //loc = ratio * (loc + 0.5); // Zoom scalar + shift
-    loc = ratio * loc + 0.1 * iTime; // Zoom scalar + animated shift
+    //loc = ratio * loc + 0.1 * iTime; // Zoom scalar + animated shift
     //return texture(iChannel0, loc); //Full RGBA
     //return texture(iChannel0, loc).rrrr; // greyscale
+    
+    float fSmoothTime = abs(sin(fTime) * 0.5 + 0.5); // Smoothly animating time
+    
+    return mix(texture(iChannel0, loc), texture(iChannel2, loc), fSmoothTime); // Crossfade
     
     //test surface pos and norm
     //return vec4(vp.viewportPoint); // position
@@ -208,11 +212,11 @@ color4 calcColor(in sViewport vp, in sRay ray)
     
     // cube map
     // sampler type: samplerCube
-    vec3 cubeLoc = ray.direction.xyz; // cubemap sample vector
+    //vec3 cubeLoc = ray.direction.xyz; // cubemap sample vector
     // 3D rotation matrix
     //cubeLoc = rot * cubeLoc;
     //return vec4(cubeLoc, 1.0);
-    return texture(iChannel1, cubeLoc);
+    //return texture(iChannel1, cubeLoc);
     
 }
 
@@ -237,5 +241,5 @@ void mainImage(out color4 fragColor, in sCoord fragCoord)
     // render
     initViewport(vp, viewportHeight, focalLength, fragCoord, iResolution.xy);
     initRayPersp(ray, eyePosition, vp.viewportPoint.xyz);
-    fragColor += calcColor(vp, ray);
+    fragColor += calcColor(vp, ray, iTime);
 }
