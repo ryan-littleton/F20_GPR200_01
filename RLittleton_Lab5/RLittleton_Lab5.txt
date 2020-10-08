@@ -1,3 +1,9 @@
+/*
+Author: Ryan Littleton - using starter from Daniel Buckstein
+Class : GPR-200-01
+Assignment : Lab 5
+*/
+
 // GLSL STARTER CODE BY DANIEL S. BUCKSTEIN
 
 //------------------------------------------------------------
