@@ -174,9 +174,30 @@ sCoord wave(in sCoord origLoc)
     sCoord deformedLoc;
     // do something
     return deformedLoc;
+    
+}// These rotation matrices from https://gist.github.com/onedayitwillmake/3288507
+mat4 rotationX( in float angle ) {
+	return mat4(	1.0,		0,			0,			0,
+			 		0, 	cos(angle),	-sin(angle),		0,
+					0, 	sin(angle),	 cos(angle),		0,
+					0, 			0,			  0, 		1);
 }
 
-// crossFade: fades between two textures based on time
+mat4 rotationY( in float angle ) {
+	return mat4(	cos(angle),		0,		sin(angle),	0,
+			 				0,		1.0,			 0,	0,
+					-sin(angle),	0,		cos(angle),	0,
+							0, 		0,				0,	1);
+}
+
+mat4 rotationZ( in float angle ) {
+	return mat4(	cos(angle),		-sin(angle),	0,	0,
+			 		sin(angle),		cos(angle),		0,	0,
+							0,				0,		1,	0,
+							0,				0,		0,	1);
+}
+
+// crossfade: fades between two textures based on time
 //	  vp:  Viewport to calc resolution
 //	  fTime: time passed in for animation
 vec4 crossfade(in sViewport vp, in float fTime)
@@ -192,6 +213,13 @@ vec4 crossfade(in sViewport vp, in float fTime)
     
     float fSmoothTime = abs(sin(fTime) * 0.5 + 0.5); // Smoothly animating time
     return mix(texture(iChannel0, loc1), texture(iChannel2, loc2), fSmoothTime); // Crossfade between two textures
+}
+
+vec4 cubemap(in sRay ray, in float fTime)
+{
+    vec4 cubeLoc = vec4(ray.direction.xyz, 1.0); // cubemap sample vector
+    cubeLoc *= rotationY(fTime);
+    return texture(iChannel1, cubeLoc.xyz);
 }
 
 // calcColor: calculate the color of current pixel
@@ -219,7 +247,7 @@ color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
     //return texture(iChannel0, loc); //Full RGBA
     //return texture(iChannel0, loc).rrrr; // greyscale
     
-    return crossfade(vp, fTime);
+    //return crossfade(vp, fTime);
     
     //test surface pos and norm
     //return vec4(vp.viewportPoint); // position
@@ -228,11 +256,15 @@ color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
     
     // cube map
     // sampler type: samplerCube
-    //vec3 cubeLoc = ray.direction.xyz; // cubemap sample vector
+    //vec4 cubeLoc = vec4(ray.direction.xyz, 1.0); // cubemap sample vector
+    //cubeLoc.x += 0.5 * sin(fTime);
+    //cubeLoc *= rotationY(fTime);
     // 3D rotation matrix
     //cubeLoc = rot * cubeLoc;
     //return vec4(cubeLoc, 1.0);
-    //return texture(iChannel1, cubeLoc);
+    //return texture(iChannel1, cubeLoc.xyz);
+    //return mix(texture(iChannel1, cubeLoc), vec4(cubeLoc, 1.0), 0.5);
+    return cubemap(ray, fTime);
     
 }
 
