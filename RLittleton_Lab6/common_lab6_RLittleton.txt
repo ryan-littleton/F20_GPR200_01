@@ -172,6 +172,39 @@ void initRayOrtho(out sRay ray,
     initRayPersp(ray, eyePosition + sBasis(viewport.xy, 0.0), viewport);
 }
 
+//------------------------------------------------------------
+// MISC FUNCTIONS
+
+// These rotation matrices from https://gist.github.com/onedayitwillmake/3288507
+mat4 rotationX( in float angle ) {
+    float cosAngle = cos(angle);
+    float sinAngel = sin(angle);
+	return mat4(	1.0,		0,			0,			0,
+			 		0, 	cosAngle,	-sinAngel,		0,
+					0, 	sinAngel,	 cosAngle,		0,
+					0, 			0,			  0, 		1);
+}
+
+// These rotation matrices from https://gist.github.com/onedayitwillmake/3288507
+mat4 rotationY( in float angle ) {
+    float cosAngle = cos(angle);
+    float sinAngel = sin(angle);
+	return mat4(	cosAngle,		0,		sinAngel,	0,
+			 				0,		1.0,			 0,	0,
+					-sinAngel,	0,		cosAngle,	0,
+							0, 		0,				0,	1);
+}
+
+// These rotation matrices from https://gist.github.com/onedayitwillmake/3288507
+mat4 rotationZ( in float angle ) {
+    float cosAngle = cos(angle);
+    float sinAngel = sin(angle);
+	return mat4(	cosAngle,		-sinAngel,	0,	0,
+			 		sinAngel,		cosAngle,		0,	0,
+							0,				0,		1,	0,
+							0,				0,		0,	1);
+}
+
 
 //------------------------------------------------------------
 /*
@@ -181,9 +214,9 @@ void initRayOrtho(out sRay ray,
 // latest version or whichever is used
 #version 300 es
 
-// **CONTENTS OF COMMON TAB PASTED HERE**
-
 // PROGRAM UNIFORMS (see 'Shader Inputs' dropdown)
+
+// **CONTENTS OF COMMON TAB PASTED HERE**
 
 // **CONTENTS OF BUFFER TAB PASTED HERE**
 

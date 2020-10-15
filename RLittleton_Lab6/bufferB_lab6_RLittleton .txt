@@ -1,4 +1,83 @@
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
+/*
+Author: Ryan Littleton
+Class : GPR-200-01
+Assignment : Lab 6
+*/
+
+/*
+// calcColor: calculate the color of current pixel
+// This is the version from the blue book, but it is causing the image to be 1/4th size for some reason
+// so not using it for now.
+color4 calcColor(in sCoord fragCoord)
 {
-    fragColor = vec4(0.5,0.5,1.0,1.0);
+    vec4 col;
+   	int i;
+	float lum[25];
+	vec2 tex_scale = vec2(1.0) / iChannelResolution[0].xy;
+	for (i = 0; i < 25; i++)
+	{
+		vec2 tc = (2.0 * fragCoord +
+			3.5 * vec2(i % 5 - 2, i / 5 - 2));
+		vec3 col = texture(iChannel0, tc * tex_scale).rgb;
+		lum[i] = dot(col, vec3(0.3, 0.59, 0.11));
+	}
+	// Calculate weighted color of region
+	vec3 vColor = texelFetch(iChannel0,
+		2 * ivec2(fragCoord), 0).rgb;
+	float kernelLuminance = (
+		(1.0 * (lum[0] + lum[4] + lum[20] + lum[24])) +
+		(4.0 * (lum[1] + lum[3] + lum[5] + lum[9] +
+		lum[15] + lum[19] + lum[21] + lum[23])) +
+		(7.0 * (lum[2] + lum[10] + lum[14] + lum[22])) +
+		(16.0 * (lum[6] + lum[8] + lum[16] + lum[18])) +
+		(26.0 * (lum[7] + lum[11] + lum[13] + lum[17])) +
+		(41.0 * lum[12])
+		) / 273.0;
+    
+	// Compute the corresponding exposure
+	float exposure = sqrt(8.0 / (kernelLuminance + 0.25));
+	// Apply the exposure to this texel
+	col.rgb = 1.0 - exp2(-vColor * exposure);
+	col.a = 1.0f;
+    return col;
+}
+*/
+
+// calcToneMap: calculate the tonemap
+color4 calcToneMap(in sCoord fragCoord)
+{
+    // Followed this tutorial for tone mapping https://learnopengl.com/Advanced-Lighting/HDR
+    const float gamma = 2.2;
+    float exposure = 1.0;
+    vec3 hdrColor = texture(iChannel0, fragCoord / iChannelResolution[0].xy).rgb;
+  
+    // exposure tone mapping
+    vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
+    // gamma correction 
+    mapped = pow(mapped, vec3(1.0 / gamma));
+    
+    // This is a modified version of https://learnopengl.com/Advanced-Lighting/Bloom
+    vec4 brightColor;
+    // gets brightness from the tone mapped color by converting to greyscale
+    float brightness = dot(mapped.rgb, vec3(0.2126, 0.7152, 0.0722));
+    // set the value for what is considered bright. 
+    // if this was HDR, using 1 would be a good starting point as brightness could be above 1.
+    if(brightness > 0.7)
+        brightColor = vec4(mapped.rgb, 1.0);
+    else
+        brightColor = vec4(0.0, 0.0, 0.0, 1.0);
+  
+    return vec4(brightColor); // return the bright pass
+}
+
+
+//------------------------------------------------------------
+// SHADERTOY MAIN
+
+// mainImage: process the current pixel (exactly one call per pixel)
+//    fragColor: output final color for current pixel
+//    fragCoord: input location of current pixel in image (in pixels)
+void mainImage(out color4 fragColor, in sCoord fragCoord)
+{
+    fragColor = calcToneMap(fragCoord);
 }

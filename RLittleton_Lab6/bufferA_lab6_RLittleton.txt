@@ -1,20 +1,39 @@
+/*
+Author: Ryan Littleton - using starter from Daniel Buckstein
+Class : GPR-200-01
+Assignment : Lab 6
+*/
+
 // GLSL STARTER CODE BY DANIEL S. BUCKSTEIN
 //  -> BUFFER A TAB (scene)
 
 //------------------------------------------------------------
 // RENDERING FUNCTIONS
 
+// cubemap: rotating cubemap
+//	  ray:  needed for direction
+//	  fTime: time passed in for rotation
+vec4 cubemap(in sRay ray, in float fTime)
+{
+    vec4 cubeLoc = vec4(ray.direction.xyz, 1.0); // cubemap sample vector
+    cubeLoc *= rotationY(fTime);
+    
+    return texture(iChannel0, cubeLoc.xyz);
+}
+
 // calcColor: calculate the color of current pixel
 //	  vp:  input viewport info
 //	  ray: input ray info
-color4 calcColor(in sViewport vp, in sRay ray)
+color4 calcColor(in sViewport vp, in sRay ray, in float fTime)
 {
     // test inputs
     //return color4(ray.direction.xyz == vp.viewportPoint.xyz); // pass
     //return color4(lengthSq(vp.viewportPoint.xy) >= 0.25); // pass
     //return color4(vp.uv, 0.0, 0.0);
     //return color4(vp.ndc, 0.0, 0.0);
-    return asPoint(sBasis(vp.viewportPoint.xy, -vp.viewportPoint.z));
+    //return asPoint(sBasis(vp.viewportPoint.xy, -vp.viewportPoint.z));
+    
+    return cubemap(ray, fTime);
 }
 
 
@@ -39,5 +58,5 @@ void mainImage(out color4 fragColor, in sCoord fragCoord)
     // render
     initViewport(vp, viewportHeight, focalLength, fragCoord, iResolution.xy);
     initRayPersp(ray, eyePosition, vp.viewportPoint.xyz);
-    fragColor += calcColor(vp, ray);
+    fragColor += calcColor(vp, ray, iTime);
 }

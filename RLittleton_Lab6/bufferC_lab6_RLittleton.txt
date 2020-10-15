@@ -1,4 +1,23 @@
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
+/*
+Author: Ryan Littleton
+Class : GPR-200-01
+Assignment : Lab 6
+*/
+
+// calcToneMap: calculate the tonemap
+color4 calcBlur(in sCoord fragCoord)
 {
-    fragColor = vec4(0.0,0.0,1.0,1.0);
+	return vec4(1.0);
+}
+
+
+//------------------------------------------------------------
+// SHADERTOY MAIN
+
+// mainImage: process the current pixel (exactly one call per pixel)
+//    fragColor: output final color for current pixel
+//    fragCoord: input location of current pixel in image (in pixels)
+void mainImage(out color4 fragColor, in sCoord fragCoord)
+{
+    fragColor = calcBlur(fragCoord);
 }
