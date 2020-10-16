@@ -16,7 +16,7 @@ Assignment : Lab 6
 vec4 cubemap(in sRay ray, in float fTime)
 {
     vec4 cubeLoc = vec4(ray.direction.xyz, 1.0); // cubemap sample vector
-    cubeLoc *= rotationY(fTime);
+    cubeLoc *= rotationY(0.3 * fTime); // Slow the rotation down a bit
     
     return texture(iChannel0, cubeLoc.xyz);
 }

@@ -1,6 +1,9 @@
 // GLSL STARTER CODE BY DANIEL S. BUCKSTEIN
 //  -> COMMON TAB (shared with all other tabs)
 
+
+
+
 //------------------------------------------------------------
 // TYPE ALIASES & UTILITY FUNCTIONS
 
@@ -203,6 +206,11 @@ mat4 rotationZ( in float angle ) {
 			 		sinAngel,		cosAngle,		0,	0,
 							0,				0,		1,	0,
 							0,				0,		0,	1);
+}
+
+float normpdf(in float x, in float sigma)
+{
+	return 0.39894*exp(-0.5*x*x/(sigma*sigma))/sigma;
 }
 
 
