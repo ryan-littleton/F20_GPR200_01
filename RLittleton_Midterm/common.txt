@@ -220,38 +220,48 @@ float normpdf(in float x, in float sigma)
 
 //------------------------------------------------------------
 // SIGNED DISTANCE FIELD FUNCTIONS
+// Followed this tutorial on raymarching and SDF 
+// http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/
 
-/**
- * Signed distance function for a sphere centered at the origin with radius 1.0;
- */
-float sphereSDF(vec3 samplePoint) {
-    return length(samplePoint) - 1.0;
+// sphereSDF: calculates sphere sdf
+//	  point: 			 input for the sphere center
+//	  r: 			 	 input for the sphere radius
+float sphereSDF(vec3 point, float r) {
+    return length(point) - r;
 }
 
+// sphereSDF: calculates sphere sdf with a radius of 1
+//	  point: 			 input for the sphere center
+float sphereSDF(vec3 point) {
+    return sphereSDF(point, 1.0);
+}
+
+
+
+
 /**
- * Signed distance function describing the scene.
- * 
- * Absolute value of the return value indicates the distance to the surface.
- * Sign indicates whether the point is inside or outside the surface,
- * negative indicating inside.
+ * Return a transformation matrix that will transform a ray from view space
+ * to world coordinates, given the eye point, the camera target, and an up vector.
+ *
+ * This assumes that the center of the camera is aligned with the negative z axis in
+ * view space when calculating the ray marching direction.
  */
-float sceneSDF(vec3 samplePoint) {
-    return sphereSDF(samplePoint);
+mat4 viewMatrix(sBasis eyePosition) {
+    vec3 origin = vec3(0.0);
+    vec3 up = vec3(0.0, 1.0, 0.0);
+	vec3 f = normalize(origin - eyePosition);
+	vec3 s = normalize(cross(f, up));
+	vec3 u = cross(s, f);
+	return mat4(
+		vec4(s, 0.0),
+		vec4(u, 0.0),
+		vec4(-f, 0.0),
+		vec4(0.0, 0.0, 0.0, 1)
+	);
 }
 
 //------------------------------------------------------------
 // LIGHTING FUNCTIONS
-
-/**
- * Using the gradient of the SDF, estimate the normal on the surface at point p.
- */
-vec3 estimateNormal(vec3 p) {
-    return normalize(vec3(
-        sceneSDF(vec3(p.x + EPSILON, p.y, p.z)) - sceneSDF(vec3(p.x - EPSILON, p.y, p.z)),
-        sceneSDF(vec3(p.x, p.y + EPSILON, p.z)) - sceneSDF(vec3(p.x, p.y - EPSILON, p.z)),
-        sceneSDF(vec3(p.x, p.y, p.z  + EPSILON)) - sceneSDF(vec3(p.x, p.y, p.z - EPSILON))
-    ));
-}
 
 // Lighting functions from my lab 4
 // holds point light data
@@ -272,14 +282,12 @@ void initPointLight(out pointLight light, in vec3 center, in vec4 color, in floa
 
 // calcLight: calculates specular and diffuse for the light passed in
 //	  light: 			 input for the current light
+//	  ray: 			     needed for view vector
 //	  surfaceColor: 	 input for color
-//	  normal: 			 input for normal
-//	  position: 		 input for position on sphere
-//	  vView: 	 		 input for view vector
-vec4 calcLight(in pointLight light, in sRay ray, in color4 surfaceColor, in vec3 p)
+//	  p: 			 	 closest surface point along view ray
+vec4 calcLight(in pointLight light, in sRay ray, in vec3 normal, in color4 surfaceColor, in vec3 p)
 {
     vec3 vView = normalize(ray.origin.xyz - ray.direction.xyz); // view vector
-	vec3 normal = estimateNormal(p);
     // Light direction to position
     vec3 vLightDir;
     vLightDir = light.center.xyz - p;
