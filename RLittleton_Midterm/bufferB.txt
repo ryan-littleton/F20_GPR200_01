@@ -1,3 +1,8 @@
+/*
+Author: Ryan Littleton - using starter from Daniel Buckstein
+Class : GPR-200-01
+Assignment : Midterm
+*/
 //------------------------------------------------------------
 // SIGNED DISTANCE FIELD FUNCTIONS
 // Followed this tutorial on raymarching and SDF 
@@ -5,10 +10,100 @@
 // Since sceneSDF is what creates the scene, it and functions dependent
 // on it will be here and not in common
 
-// sceneSDF: calculates a scene using sdf functions
+// sceneSDF1-5: calculates a scene using sdf functions, each does a different thing
 //	  point: 			 input for the current point
-float sceneSDF(vec3 point) {
-    return sphereSDF(point);
+//	  fTime: 			 time for animation
+
+// Animated repeating links
+float sceneSDF1(in vec3 p, in float fTime)
+{
+    float finalSDF;
+    float sphere1 = sphereSDF(p);
+    float cube1 = cubeSDF(p, 0.8);
+    float repeatLinks = linkSDF(repeatSDF(p, vec3( 5.0 + sin(fTime))), 0.5, 1.0, 0.3);
+    float step1 = unionSDF(repeatLinks, sphere1);
+    float step2 = differenceSDF(cube1, step1);
+    finalSDF = unionSDF(repeatLinks, step2);
+    return finalSDF;
+}
+
+// cube of links based on intersect around a sphere
+float sceneSDF2(in vec3 p, in float fTime)
+{
+    float finalSDF;
+    float sphere1 = sphereSDF(p);
+    float cube1 = cubeSDF(p, 3.0);
+    float repeatLinks = repeatLinkSDF(p, vec3( 2.0 + sin(fTime)));
+    float step1 = intersectSDF(repeatLinks, cube1);
+    float step2 = differenceSDF(sphere1, step1);
+    finalSDF = unionSDF(step1, step2);
+    return finalSDF;
+}
+
+// repeating intersected sphere, shows how patterns can be repeated
+float sceneSDF3(in vec3 p, in float fTime)
+{
+    float finalSDF;
+    vec3 inf = repeatSDF(p, vec3(4.0));
+    float sphere1 = sphereSDF(inf);
+    float cube1 = cubeSDF(inf, 0.8);
+    float step1 = differenceSDF(sphere1, cube1);
+    float step2 = intersectSDF(sphere1, step1);
+    finalSDF = intersectSDF(step1, step2);
+    return finalSDF;
+}
+
+// combining multiple vector manipulators for a trippy bend
+float sceneSDF4(in vec3 p, in float fTime)
+{
+    float finalSDF;
+    vec3 pBend = bendSDF(p, 0.1 * sin(fTime));
+    vec3 inf = repeatSDF(pBend, vec3(4.0));
+    float link1 = linkSDF(inf, 0.5, 1.0, 0.3);
+    vec3 inf2 = repeatSDF(vec3(pBend.x, pBend.y + 1.8, pBend.z), vec3(4.0));
+    vec4 rot = vec4(inf2, 1.0);
+    rot *= rotationY(1.0);
+    inf2 = rot.xyz;
+    float link2 = linkSDF(inf2, 0.5, 1.0, 0.3);
+    finalSDF = unionSDF(link1, link2);
+    return finalSDF;
+}
+
+// basic union demo
+float sceneSDF5(in vec3 p, in float fTime)
+{
+    float finalSDF;
+    float sphere1 = sphereSDF(p);
+    float cube1 = cubeSDF(p, 0.8);
+    finalSDF = unionSDF(sphere1, cube1);
+    return finalSDF;
+}
+
+//basic difference demo
+float sceneSDF6(in vec3 p, in float fTime)
+{
+    float finalSDF;
+    float sphere1 = sphereSDF(p);
+    float cube1 = cubeSDF(p, 0.8);
+    finalSDF = differenceSDF(sphere1, cube1);
+    return finalSDF;
+}
+
+//basic intersect demo
+float sceneSDF7(in vec3 p, in float fTime)
+{
+    float finalSDF;
+    float sphere1 = sphereSDF(p);
+    float cube1 = cubeSDF(p, 0.8);
+    finalSDF = intersectSDF(sphere1, cube1);
+    return finalSDF;
+}
+
+// replace the num in the function call below to change
+float sceneSDF(in vec3 p, in float fTime) 
+{
+    
+    return sceneSDF4(p, fTime);
 }
 
 // shortestDistanceToSurface: calcs shortest distance from eyePosition to surface
@@ -16,20 +111,23 @@ float sceneSDF(vec3 point) {
 //	  rayDirection:  input for the ray direction
 //	  start:  		 starting distance from the eye position
 //	  end:  		 max distance to march
-float shortestDistanceToSurface(vec3 eyePosition, vec3 rayDirection, float start, float end) {
+float shortestDistanceToSurface(in vec3 eyePosition, in vec3 rayDirection, in float start, in float end, in float fTime) 
+{
     float depth = start;
     
     for (int i = 0; i < MAX_MARCHING_STEPS; i++) {
         
-        float dist = sceneSDF(eyePosition + depth * rayDirection);
+        float dist = sceneSDF(eyePosition + depth * rayDirection, fTime);
         
-        if (dist < EPSILON) {
+        if (dist < EPSILON) 
+        {
 			return depth;
         }
         
         depth += dist;
         
-        if (depth >= end) {
+        if (depth >= end) 
+        {
             return end;
         }
     }
@@ -38,20 +136,32 @@ float shortestDistanceToSurface(vec3 eyePosition, vec3 rayDirection, float start
 
 // estimateNormal: calculates an estimate normal from sdf
 //	  p: 			 input for the current point along surface
-vec3 estimateNormal(vec3 p) {
+vec3 estimateNormal(in vec3 p, in float fTime) 
+{
     return normalize(vec3(
-        sceneSDF(vec3(p.x + EPSILON, p.y, p.z)) - sceneSDF(vec3(p.x - EPSILON, p.y, p.z)),
-        sceneSDF(vec3(p.x, p.y + EPSILON, p.z)) - sceneSDF(vec3(p.x, p.y - EPSILON, p.z)),
-        sceneSDF(vec3(p.x, p.y, p.z  + EPSILON)) - sceneSDF(vec3(p.x, p.y, p.z - EPSILON))
+        sceneSDF(vec3(p.x + EPSILON, p.y, p.z), fTime) - sceneSDF(vec3(p.x - EPSILON, p.y, p.z), fTime),
+        sceneSDF(vec3(p.x, p.y + EPSILON, p.z), fTime) - sceneSDF(vec3(p.x, p.y - EPSILON, p.z), fTime),
+        sceneSDF(vec3(p.x, p.y, p.z  + EPSILON), fTime) - sceneSDF(vec3(p.x, p.y, p.z - EPSILON), fTime)
     ));
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
+    //get adjusted mousepos
+    vec2 mousePos;
+    mousePos.xy = iMouse.xy / iResolution.xy;
+
     // viewing plane (viewport) inputs
-    const sBasis eyePosition = sBasis(0.0, 0.0, -5.0);
-    const sScalar viewportHeight = 2.0, focalLength = 1.5;
-    
+    //const sBasis eyePosition = sBasis(5.0, 2.0, 1.5);
+    const sScalar viewportHeight = 2.0, focalLength = 1.0;
+    mousePos = mousePos * viewportHeight - viewportHeight * 0.5;
+
+    // Rotate objects by moving the mouse
+	sBasis eyePosition = sBasis(0.0, 0.0, 5.0);
+    vec4 eyeRot = vec4(eyePosition, 1.0);
+    eyeRot *= rotationY(mousePos.x * 3.0) * rotationX(-mousePos.y * 3.0);
+    eyePosition.xyz = eyeRot.xyz;
+
     // viewport info
     sViewport vp;
 
@@ -60,28 +170,52 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     
     // render
     initViewport(vp, viewportHeight, focalLength, fragCoord, iResolution.xy);
-    initRayPersp(ray, eyePosition, vp.viewportPoint.xyz);
+    initRayPersp(ray, vec3(0.0), vp.viewportPoint.xyz);
     
-    // Light at normalized mouse xy
-    vec2 mousePos = iMouse.xy / vp.resolution.xy;
-    mousePos = mousePos * 2.0 - 1.0;
+
+   	// getting negative z aligned view for setting world direction
+    vec3 vView = normalize(vec3(ray.origin.xyz - ray.direction.xyz));
+    vView.z = -vView.z;
+    
+    // use viewmatrix to center view on the target
+    mat4 viewToWorld = viewMatrix(eyePosition);
+    vec3 worldDir = (viewToWorld * vec4(vView, 0.0)).xyz;
+    
+    // Light at normalized mouse xy - changed this as I wanted to put rotation on the mouse
+    /*
+    vec3 mousePos;
+    mousePos.xy = iMouse.xy / vp.resolution.xy;
+    mousePos.z = - 10.0;
+    mousePos = mousePos * viewportHeight - viewportHeight * 0.5;
     pointLight light;
-    initPointLight(light, vec3(mousePos, -10.0), vec4(1.0), 5.0);
+    initPointLight(light, mousePos, vec4(1.0), 10.0);
+	*/
     
-    float dist = shortestDistanceToSurface(vp.viewportPoint.xyz, ray.direction.xyz, MIN_DIST, MAX_DIST);
+    // Animating light
+    vec3 lightPos = vec3(eyePosition.x * sin(iTime),
+                          eyePosition.y,
+                          eyePosition.z * cos(iTime));
+    pointLight light;
+    initPointLight(light, lightPos, vec4(1.0), 10.0);
+
+    // Calc distance to surface
+    float dist = shortestDistanceToSurface(eyePosition, worldDir, MIN_DIST, MAX_DIST, iTime);
     
-    if (dist > MAX_DIST - EPSILON) {
-        // Didn't hit anything
-        fragColor = vec4(0.0, 0.0, 0.0, 0.0);
+    // If dist is greater than max nothing there
+    if (dist > MAX_DIST - EPSILON) 
+    {
+        fragColor = texture(iChannel0, vp.uv); // Background buffer
 		return;
     }
     
     // Closest point on surface from eye position along ray direction
-    vec3 p = eyePosition + dist * ray.direction.xyz;
+    vec3 p = eyePosition + dist * worldDir;
     // Estimates normal from p
-    vec3 normal = estimateNormal(p);
+    vec3 normal = estimateNormal(p, iTime);
 
     //fragColor = vec4(1.0, 0.0, 0.0, 1.0);
     //fragColor = vec4(estimateNormal(p), 1.0);
-    fragColor = calcLight(light, ray, normal, vec4(0.5,0.0,1.0,1.0), p);
+    vec4 purple = vec4(0.5,0.0,1.0,1.0);
+    vec4 tex = texture(iChannel1, p.xy);
+    fragColor = calcLight(light, ray, normal, tex, p);
 }
