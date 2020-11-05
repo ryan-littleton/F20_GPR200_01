@@ -10,20 +10,38 @@
 				<item value="Texcoord" semantic="TEXCOORD0" />
 			</inputlayout>
 			<rendertexture />
-			<items />
+			<items>
+				<item name="helloSphere" type="geometry">
+					<type>Sphere</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
 			<itemvalues />
+			<variables>
+				<variable type="float4x4" name="uViewMat" system="View" />
+				<variable type="float4x4" name="uModelMat" system="GeometryTransform" />
+				<variable type="float4x4" name="uProjMat" system="Projection" />
+				<variable type="float4x4" name="uViewProjMat" system="ViewProjection" />
+			</variables>
 			<macros />
 		</pass>
 	</pipeline>
 	<objects />
 	<cameras />
 	<settings>
+		<entry type="property" name="HelloGLSL" item="pipe" />
 		<entry type="file" name="HelloGLSL" shader="vs" />
 		<entry type="file" name="HelloGLSL" shader="ps" />
+		<entry type="pinned" name="uViewMat" owner="HelloGLSL" />
+		<entry type="pinned" name="uProjMat" owner="HelloGLSL" />
+		<entry type="pinned" name="uViewProjMat" owner="HelloGLSL" />
 		<entry type="camera" fp="false">
-			<distance>4</distance>
-			<pitch>28</pitch>
-			<yaw>317</yaw>
+			<distance>5</distance>
+			<pitch>29</pitch>
+			<yaw>294</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
