@@ -175,11 +175,11 @@ void main()
     
     vPosition = aPosition * uModelMat;
     
-    // Loop for calculating lights
+    // Loop for transforming lights
     for(int i = vLights.length() - 1; i >= 0; i--)
     {
     	// Transforms lights to object space, comment out for view space
-    	//vLights[i].center.xyz = (vLights[i].center * viewToModelMat).xyz;
+    	vLights[i].center.xyz = (vLights[i].center * viewToModelMat).xyz;
     }
     
     vec3 finalColor; // final color from lights

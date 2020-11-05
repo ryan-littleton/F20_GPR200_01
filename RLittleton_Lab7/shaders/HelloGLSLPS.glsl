@@ -95,7 +95,8 @@ void main()
 	//rtFragColor = texture(uSampler, vTexcoord.xy);
 	
 	//rtFragColor = vColor; // Vertex Lit
+	
 	vec3 finalColor;
 	calcLight(finalColor);
-	//rtFragColor = vec4(finalColor, 1.0);
+	rtFragColor = vec4(finalColor, 1.0);
 }

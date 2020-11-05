@@ -42,16 +42,15 @@
 	</objects>
 	<cameras />
 	<settings>
-		<entry type="property" name="HelloGLSL" item="pipe" />
 		<entry type="file" name="HelloGLSL" shader="vs" />
 		<entry type="file" name="HelloGLSL" shader="ps" />
 		<entry type="pinned" name="uViewMat" owner="HelloGLSL" />
 		<entry type="pinned" name="uProjMat" owner="HelloGLSL" />
 		<entry type="pinned" name="uViewProjMat" owner="HelloGLSL" />
 		<entry type="camera" fp="false">
-			<distance>6</distance>
-			<pitch>-89</pitch>
-			<yaw>64</yaw>
+			<distance>10</distance>
+			<pitch>89</pitch>
+			<yaw>182</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
