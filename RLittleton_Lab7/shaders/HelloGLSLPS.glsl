@@ -1,4 +1,4 @@
-#version 330
+#version 450
 
 /*
 Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
@@ -7,7 +7,7 @@ Assignment : Lab 7
 */
 
 #ifdef GL_ES
-precision highp float;
+precision highp float; // don't need this in glsl but makes switching to es easy
 #endif // GL_ES
 
 layout (location = 0) out vec4 rtFragColor;
@@ -18,7 +18,7 @@ layout (location = 0) out vec4 rtFragColor;
 
 // Per-Fragment: receive reqs for final color
 in vec4 vNormal;
-in vec2 vTexcoord;
+in vec4 vTexcoord;
 
 void main() 
 {
@@ -30,5 +30,5 @@ void main()
 	// Per-Fragment inputs to calc final color
 	vec4 N = normalize(vNormal);
 	rtFragColor = vec4(N.xyz * 0.5 + 0.5, 1.0);
-	//rtFragColor = vec4(vTexcoord, 0.0, 1.0);
+	rtFragColor = vTexcoord;
 }

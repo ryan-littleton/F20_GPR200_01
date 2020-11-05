@@ -1,4 +1,4 @@
-#version 330
+#version 450
 
 /*
 Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
@@ -16,7 +16,7 @@ layout (location = 0) in vec4 aPosition;
 layout (location = 1) in vec3 aNormal;
 
 // Texture Space
-layout (location = 2) in vec2 aTexcoord;
+layout (location = 2) in vec4 aTexcoord;
 
 // Transform Uniforms
 uniform mat4 uModelMat;
@@ -31,7 +31,7 @@ uniform mat4 uViewProjMat;
 
 // Per-Fragment: indiv. components
 out vec4 vNormal;
-out vec2 vTexcoord;
+out vec4 vTexcoord;
 
 void main()
 {
@@ -61,13 +61,22 @@ void main()
 	mat3 normalMatrix = transpose(inverse(mat3(modelViewMat)));
 	vec3 norm_camera = normalMatrix * aNormal;
 	
+	// Texcoord Pipeline
+	mat4 atlasMat = mat4(0.5, 0.0, 0.0, 0.0,
+						 0.0, 0.5, 0.0, 0.0,
+						 0.0, 0.0, 1.0, 0.0,
+						 0.0, 0.0, 0.0, 1.0); // Change left two of this row to scale
+	vec4 uv_atlas = atlasMat * aTexcoord;
+	
 	// Optionally write varyings
 	// vColor = aPosition; etc.
 	
 	// Per-Fragment outputs
 	vNormal = vec4(norm_camera, 0.0);
-	vTexcoord = aTexcoord;
+	//vTexcoord = aTexcoord;
+	vTexcoord = uv_atlas;
 	
-	
+	// Unfolding tex 
+	//gl_Position = uProjMat * modelViewMat * aTexcoord;
 
 }
