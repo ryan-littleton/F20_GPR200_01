@@ -50,8 +50,8 @@
 		<entry type="pinned" name="uViewProjMat" owner="HelloGLSL" />
 		<entry type="camera" fp="false">
 			<distance>6</distance>
-			<pitch>-75</pitch>
-			<yaw>170</yaw>
+			<pitch>-89</pitch>
+			<yaw>64</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
