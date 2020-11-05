@@ -16,7 +16,7 @@ uniform sampler2D uSampler;
 
 // Varying
 // Per-Vertex: receive final color
-// in vec4 color;
+in vec4 vColor;
 
 // Per-Fragment: receive reqs for final color
 in vec4 vNormal;
@@ -34,4 +34,5 @@ void main()
 	rtFragColor = vec4(N.xyz * 0.5 + 0.5, 1.0);
 	rtFragColor = vTexcoord;
 	rtFragColor = texture(uSampler, vTexcoord.xy);
+	rtFragColor = vColor;
 }

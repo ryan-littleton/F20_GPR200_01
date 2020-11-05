@@ -30,6 +30,7 @@
 						<value>0</value>
 					</row>
 				</variable>
+				<variable type="float" name="uTime" system="Time" />
 			</variables>
 			<macros />
 		</pass>
@@ -48,8 +49,8 @@
 		<entry type="pinned" name="uViewProjMat" owner="HelloGLSL" />
 		<entry type="camera" fp="false">
 			<distance>3</distance>
-			<pitch>-3</pitch>
-			<yaw>350</yaw>
+			<pitch>-58</pitch>
+			<yaw>359</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
