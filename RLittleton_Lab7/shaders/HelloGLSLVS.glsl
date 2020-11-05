@@ -122,6 +122,9 @@ void main()
 	vec4 pos_clip = uProjMat * pos_camera;
 	gl_Position = pos_clip;
 	
+	// View to model space
+	mat4 viewToModelMat = inverse(modelViewMat);
+	
 	// Normal Pipeline
 	mat3 normalMatrix = transpose(inverse(mat3(modelViewMat)));
 	vec3 norm_camera = normalMatrix * aNormal;
@@ -149,22 +152,27 @@ void main()
 
     vec3 surfaceColor = texture(uSampler, vTexcoord.xy).xyz; // Set surface color to texture
     vec3 specReflectColor = vec3(1.0);
-    //vec3 vView = normalize(pos_camera.xyz); // view vector
-    vec3 vView = vec4(vec4(0.0, 0.0, -1.0, 0.0) * inverse(modelViewMat)).xyz; // Corrected view vector
+
     
     float ambientIntensity = 0.1; // ambient light
     vec3 ambientColor = vec3(0.7, 0.2, 1.0); // global ambient light color
     
     vec3 vReflectTotal = vec3(0.0); // This will keep track of the total of all light influence
     
+    vec4 vView = vec4(0.0, 0.0, -1.0, 0.0); // Negatize z aligned camera in view space
+    // Converts vView to model space, giving us the correct view vector
+    vView *= viewToModelMat;
+    
     // Loop for calculating lights
     for(int i = lights.length() - 1; i >= 0; i--)
     {
-    	lights[i].center.xyz = (lights[i].center * modelViewMat).xyz;
+    	// Transforms lights to object space, comment out for view space
+    	//lights[i].center.xyz = (lights[i].center * viewToModelMat).xyz;
+    	
         float fDiffuseIntensity; // diffuse for current light
     	float fSpecIntensity; // specular for current light
         
-        calcLight(fDiffuseIntensity, fSpecIntensity, norm_camera, aPosition.xyz, vView, lights[i]); // calc from light
+        calcLight(fDiffuseIntensity, fSpecIntensity, norm_camera, aPosition.xyz, vView.xyz, lights[i]); // calc from light
         
         vReflectTotal += (fDiffuseIntensity * surfaceColor + fSpecIntensity * specReflectColor) *
             			lights[i].color.xyz; // Add the current light calc to the sum
