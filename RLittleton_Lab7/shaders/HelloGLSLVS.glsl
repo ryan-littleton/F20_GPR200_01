@@ -29,7 +29,6 @@ uniform mat4 uViewMat;
 uniform mat4 uProjMat;
 uniform mat4 uViewProjMat;
 
-
 // Varying
 
 // Per-Vertex: Final Color
@@ -72,10 +71,10 @@ void main()
 	vec3 norm_camera = normalMatrix * aNormal;
 	
 	// Texcoord Pipeline
-	mat4 atlasMat = mat4(0.5, 0.0, 0.0, 0.0,
-						 0.0, 0.5, 0.0, 0.0,
+	mat4 atlasMat = mat4(1.0, 0.0, 0.0, 0.0, // Change first value of this row to scale
+						 0.0, 1.0, 0.0, 0.0, // Change second value of this row to scale
 						 0.0, 0.0, 1.0, 0.0,
-						 0.0, 0.0, 0.0, 1.0); // Change left two of this row to scale
+						 0.0, 0.0, 0.0, 1.0); // Change left two of this row to offset
 	vec4 uv_atlas = atlasMat * aTexcoord;
 	
 	// Optionally write varyings

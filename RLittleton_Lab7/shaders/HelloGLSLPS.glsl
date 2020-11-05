@@ -9,8 +9,10 @@ Assignment : Lab 7
 #ifdef GL_ES
 precision highp float; // don't need this in glsl but makes switching to es easy
 #endif // GL_ES
-
+// Input
 layout (location = 0) out vec4 rtFragColor;
+// Uniforms
+uniform sampler2D uSampler;
 
 // Varying
 // Per-Vertex: receive final color
@@ -31,4 +33,5 @@ void main()
 	vec4 N = normalize(vNormal);
 	rtFragColor = vec4(N.xyz * 0.5 + 0.5, 1.0);
 	rtFragColor = vTexcoord;
+	rtFragColor = texture(uSampler, vTexcoord.xy);
 }

@@ -25,11 +25,20 @@
 				<variable type="float4x4" name="uModelMat" system="GeometryTransform" />
 				<variable type="float4x4" name="uProjMat" system="Projection" />
 				<variable type="float4x4" name="uViewProjMat" system="ViewProjection" />
+				<variable type="int" name="uSampler">
+					<row>
+						<value>0</value>
+					</row>
+				</variable>
 			</variables>
 			<macros />
 		</pass>
 	</pipeline>
-	<objects />
+	<objects>
+		<object type="texture" path="textures\test.jpg" vflip="false" min_filter="Linear" mag_filter="Nearest" wrap_s="Repeat" wrap_t="Repeat">
+			<bind slot="0" name="HelloGLSL" />
+		</object>
+	</objects>
 	<cameras />
 	<settings>
 		<entry type="file" name="HelloGLSL" shader="vs" />
@@ -38,9 +47,9 @@
 		<entry type="pinned" name="uProjMat" owner="HelloGLSL" />
 		<entry type="pinned" name="uViewProjMat" owner="HelloGLSL" />
 		<entry type="camera" fp="false">
-			<distance>5</distance>
-			<pitch>40</pitch>
-			<yaw>163</yaw>
+			<distance>3</distance>
+			<pitch>-3</pitch>
+			<yaw>350</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
