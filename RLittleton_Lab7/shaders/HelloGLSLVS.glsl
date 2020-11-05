@@ -1,10 +1,15 @@
 #version 450
-
 /*
 Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
 Class : GPR-200-01
 Assignment : Lab 7
 */
+
+// This was a test to try includes, works but overly complex for our goal
+// extension to enable including files
+//#extension GL_GOOGLE_include_directive : enable
+//#include <common.h>
+
 
 // Main duty: read attributes
 // 3D position in space
@@ -23,6 +28,7 @@ uniform mat4 uModelMat;
 uniform mat4 uViewMat;
 uniform mat4 uProjMat;
 uniform mat4 uViewProjMat;
+
 
 // Varying
 
@@ -50,6 +56,10 @@ void main()
 	
 	// position in clip space (yay)
 	// vec4 pos_clip = uViewProjMat * pos_world;
+	
+	// Vertex Lighting via includes (not doing this)
+	//pointLight light;
+	//initPointLight(light, vec3(2.0), vec4(1.0), 5.0);
 	
 	// Final Pos Pipeline
 	mat4 modelViewMat = uViewMat * uModelMat;
