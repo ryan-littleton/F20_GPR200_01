@@ -48,9 +48,9 @@
 		<entry type="pinned" name="uProjMat" owner="HelloGLSL" />
 		<entry type="pinned" name="uViewProjMat" owner="HelloGLSL" />
 		<entry type="camera" fp="false">
-			<distance>3</distance>
-			<pitch>-58</pitch>
-			<yaw>359</yaw>
+			<distance>6</distance>
+			<pitch>-88</pitch>
+			<yaw>212</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />

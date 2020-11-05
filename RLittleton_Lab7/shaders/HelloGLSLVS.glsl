@@ -150,7 +150,7 @@ void main()
     vec3 surfaceColor = texture(uSampler, vTexcoord.xy).xyz; // Set surface color to texture
     vec3 specReflectColor = vec3(1.0);
     //vec3 vView = normalize(pos_camera.xyz); // view vector
-    vec3 vView = vec4(vec4(0.0, 0.0, -1.0, 0.0) * inverse(modelViewMat)).xyz;
+    vec3 vView = vec4(vec4(0.0, 0.0, -1.0, 0.0) * inverse(modelViewMat)).xyz; // Corrected view vector
     
     float ambientIntensity = 0.1; // ambient light
     vec3 ambientColor = vec3(0.7, 0.2, 1.0); // global ambient light color
@@ -160,6 +160,7 @@ void main()
     // Loop for calculating lights
     for(int i = lights.length() - 1; i >= 0; i--)
     {
+    	lights[i].center.xyz = (lights[i].center * modelViewMat).xyz;
         float fDiffuseIntensity; // diffuse for current light
     	float fSpecIntensity; // specular for current light
         
