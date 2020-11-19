@@ -16,6 +16,35 @@
 					<width>1</width>
 					<height>1</height>
 					<depth>1</depth>
+					<scaleX>0.5</scaleX>
+					<scaleY>0.5</scaleY>
+					<scaleZ>0.5</scaleZ>
+					<y>1.07700682</y>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gCube" type="geometry">
+					<type>Cube</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<x>-1.22437429</x>
+					<y>1.26500046</y>
+					<z>1.36202812</z>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gTri" type="geometry">
+					<type>Triangle</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gSphere2" type="geometry">
+					<type>Sphere</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<x>-1.77105713</x>
 					<topology>TriangleList</topology>
 				</item>
 			</items>
@@ -24,6 +53,202 @@
 				<variable type="float4x4" name="uViewMat" system="View" />
 				<variable type="float4x4" name="uModelMat" system="GeometryTransform" />
 				<variable type="float4x4" name="uProjMat" system="Projection" />
+				<variable type="float" name="uTime" system="Time" />
+				<variable type="float4x4" name="uViewProjMat">
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+				</variable>
+			</variables>
+			<macros />
+		</pass>
+		<pass name="Tonemap_Pass" type="shader" active="true">
+			<shader type="vs" path="shaders\Tonemap_PassVS.glsl" entry="main" />
+			<shader type="ps" path="shaders\Tonemap_PassPS.glsl" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture name="Tonemap" />
+			<items>
+				<item name="gFSQ_Tone" type="geometry">
+					<type>ScreenQuadNDC</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float4x4" name="uModelMat" system="GeometryTransform" />
+				<variable type="float4x4" name="uViewMat">
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+				</variable>
+				<variable type="float4x4" name="uProjMat">
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+				</variable>
+				<variable type="float2" name="uResolution" system="ViewportSize" />
+				<variable type="int" name="uTex">
+					<row>
+						<value>0</value>
+					</row>
+				</variable>
+			</variables>
+			<macros />
+		</pass>
+		<pass name="Blur_Pass" type="shader" active="true">
+			<shader type="vs" path="shaders\Blur_PassVS.glsl" entry="main" />
+			<shader type="ps" path="shaders\Blur_PassPS.glsl" entry="main" />
+			<inputlayout>
+				<item value="Position" semantic="POSITION" />
+				<item value="Normal" semantic="NORMAL" />
+				<item value="Texcoord" semantic="TEXCOORD0" />
+			</inputlayout>
+			<rendertexture name="Blur" />
+			<items>
+				<item name="gFSQ_Blur" type="geometry">
+					<type>ScreenQuadNDC</type>
+					<width>1</width>
+					<height>1</height>
+					<depth>1</depth>
+					<topology>TriangleList</topology>
+				</item>
+			</items>
+			<itemvalues />
+			<variables>
+				<variable type="float4x4" name="uModelMat" system="GeometryTransform" />
+				<variable type="float4x4" name="uViewMat">
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+				</variable>
+				<variable type="float4x4" name="uProjMat">
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+					<row>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+						<value>0</value>
+					</row>
+				</variable>
+				<variable type="float2" name="uResolution" system="ViewportSize" />
+				<variable type="int" name="uTex">
+					<row>
+						<value>0</value>
+					</row>
+				</variable>
+				<variable type="int" name="uTex1">
+					<row>
+						<value>0</value>
+					</row>
+				</variable>
 			</variables>
 			<macros />
 		</pass>
@@ -107,22 +332,36 @@
 	</pipeline>
 	<objects>
 		<object type="rendertexture" name="Scene" fsize="920,1050" clear="true">
+			<bind slot="0" name="Tonemap_Pass" />
+			<bind slot="1" name="Blur_Pass" />
+		</object>
+		<object type="texture" path="chaos_logo.png" vflip="false" min_filter="Linear" mag_filter="Nearest" wrap_s="Repeat" wrap_t="Repeat">
+			<bind slot="0" name="Simple" />
+		</object>
+		<object type="rendertexture" name="Tonemap" fsize="920,1050" clear="true">
+			<bind slot="0" name="Blur_Pass" />
+		</object>
+		<object type="rendertexture" name="Blur" fsize="920,1050" clear="true">
 			<bind slot="0" name="FSQ_Pass" />
 		</object>
 	</objects>
 	<cameras />
 	<settings>
-		<entry type="property" name="FSQ_Pass" item="pipe" />
 		<entry type="file" name="Simple" shader="vs" />
 		<entry type="file" name="Simple" shader="ps" />
 		<entry type="file" name="FSQ_Pass" shader="vs" />
 		<entry type="file" name="FSQ_Pass" shader="ps" />
+		<entry type="file" name="Tonemap_Pass" shader="vs" />
+		<entry type="file" name="Tonemap_Pass" shader="ps" />
+		<entry type="file" name="Blur_Pass" shader="vs" />
+		<entry type="file" name="Blur_Pass" shader="ps" />
 		<entry type="pinned" name="uViewMat" owner="Simple" />
 		<entry type="pinned" name="uProjMat" owner="Simple" />
+		<entry type="pinned" name="uViewProjMat" owner="Simple" />
 		<entry type="camera" fp="false">
-			<distance>5</distance>
-			<pitch>36</pitch>
-			<yaw>143</yaw>
+			<distance>8</distance>
+			<pitch>14</pitch>
+			<yaw>177</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />

@@ -1,5 +1,11 @@
 #version 450
 
+/*
+Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
+Class : GPR-200-01
+Assignment : Lab 8
+*/
+
 #ifdef GL_ES
 precision highp float;
 #endif // GL_ES
