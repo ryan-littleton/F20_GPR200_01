@@ -394,8 +394,8 @@
 		<entry type="pinned" name="uViewProjMat" owner="Scene" />
 		<entry type="camera" fp="false">
 			<distance>9</distance>
-			<pitch>0</pitch>
-			<yaw>183</yaw>
+			<pitch>1</pitch>
+			<yaw>182</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />

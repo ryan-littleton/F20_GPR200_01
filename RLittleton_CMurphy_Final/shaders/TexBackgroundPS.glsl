@@ -530,7 +530,7 @@ float sceneSDF7(in vec3 p, in float fTime)
 float sceneSDF(in vec3 p, in float fTime) 
 {
     
-    return sceneSDF4(p, fTime);
+    return sceneSDF1(p, fTime);
 }
 
 // shortestDistanceToSurface: calcs shortest distance from eyePosition to surface
@@ -582,9 +582,9 @@ void main()
     const sScalar viewportHeight = 2.0, focalLength = 1.0;
 
     // Rotate objects by moving the mouse
-	sBasis eyePosition = sBasis(0.0, 0.0, 5.0);
+	sBasis eyePosition = sBasis(0.0, 0.0, 5.5);
     vec4 eyeRot = vec4(eyePosition, 1.0);
-    eyeRot *= rotationY(30.0) * rotationX(70.0);
+    eyeRot *= rotationY(0.0) * rotationX(0.0);
     eyePosition.xyz = eyeRot.xyz;
 
     // viewport info
@@ -619,7 +619,7 @@ void main()
     // If dist is greater than max nothing there
     if (dist > MAX_DIST - EPSILON) 
     {
-        rtFragColor = texture(uTex, vp.uv); // Background buffer
+        rtFragColor = vec4(0.0, 0.0, 0.0, 1.0); // Background buffer
 		return;
     }
     

@@ -71,49 +71,6 @@ void initPointLight(out pointLight light, in vec3 center, in vec4 color, in floa
     light.intensity = intensity;
 }
 
-// calcLight: calculates specular and diffuse for the light passed in
-void calcLight(out vec3 finalColor)
-{
-    vec3 surfaceColor = texture(uSampler, vTexcoord.xy).xyz; // Set surface color to texture
-    vec3 specReflectColor = vec3(1.0);
-
-    float ambientIntensity = 0.1; // ambient light
-    vec3 ambientColor = vec3(0.7, 0.2, 1.0); // global ambient light color
-    
-    vec3 vReflectTotal = vec3(0.0); // This will keep track of the total of all light influence
-	
-	// Loop for calculating lights
-    for(int i = vLights.length() - 1; i >= 0; i--)
-    {
-   
-        float fDiffuseIntensity; // diffuse for current light
-    	float fSpecIntensity; // specular for current light
-        
-	    // Light direction to position
-	    vec3 vLightDir;
-	    vLightDir = vLights[i].center.xyz - vPosition.xyz;
-	    vLightDir = normalize(vLightDir);
-	    
-	    // diffuse coefficient
-	    float fDiffuseCoef = max(0.0, dot(vNormal.xyz, vLightDir));
-	    float fDistanceToLight = distance(vLights[i].center.xyz, vPosition.xyz);
-	
-	    // attenuation
-	    float fAIntensity = 1.0/(1.0 + fDistanceToLight / vLights[i].intensity + (fDistanceToLight * fDistanceToLight) / (vLights[i].intensity * vLights[i].intensity));
-	
-	    fDiffuseIntensity = fDiffuseCoef * fAIntensity; // Final diffuse intensity
-	                
-	    vec3 vHalfway = normalize(vLightDir + vView.xyz); // Halfway vector
-	    float fSpecCoef = max(0.0, dot(vNormal.xyz, vHalfway)); // Spec coefficient Blinn-phong
-	    float fHiExp = 64.0; // Highlight exponent
-	    fSpecIntensity = pow(fSpecCoef, fHiExp * 4.0); // Blinn-Phong
-        
-        vReflectTotal += (fDiffuseIntensity * surfaceColor + fSpecIntensity * specReflectColor) *
-            			vLights[i].color.xyz; // Add the current light calc to the sum
-    }
-    finalColor = vReflectTotal; // set final color
-}
-
 void main()
 {
 	// Required: Set gl_Position
@@ -165,9 +122,9 @@ void main()
 	vTexcoord = uv_atlas;
 	
 	// Lighting 
-    initPointLight(vLights[0], vec3(22.0 * sin(uTime), 6.0, -5.0), vec4(1.0), 30.0); // Mult by sin time to animate
-    initPointLight(vLights[1], vec3(0.0, 20.0 * cos(uTime), 5.0), vec4(1.0), 30.0);
-    initPointLight(vLights[2], vec3(-18.0 * sin(uTime), -4.0 * sin(uTime), -5.0), vec4(1.0), 30.0);
+    initPointLight(vLights[0], vec3(22.0 * sin(uTime), 6.0, -5.0), vec4(1.0), 300.0); // Mult by sin time to animate
+    initPointLight(vLights[1], vec3(0.0, 20.0 * cos(uTime), 5.0), vec4(1.0), 300.0);
+    initPointLight(vLights[2], vec3(-18.0 * sin(uTime), -4.0 * sin(uTime), -5.0), vec4(1.0), 300.0);
 
     vView = vec4(0.0, 0.0, -1.0, 0.0); // Negatize z aligned camera in view space
     // Converts vView to model space, giving us the correct view vector
@@ -181,10 +138,6 @@ void main()
     	// Transforms lights to object space, comment out for view space
     	vLights[i].center.xyz = (vLights[i].center * viewToModelMat).xyz;
     }
-    
-    vec3 finalColor; // final color from lights
-    calcLight(finalColor);
-    vColor = vec4(finalColor, 1.0); // to vec4 and return
 
 	
 	// Unfolding tex 
