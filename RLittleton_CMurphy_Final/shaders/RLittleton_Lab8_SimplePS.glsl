@@ -3,7 +3,7 @@
 /*
 Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
 Class : GPR-200-01
-Assignment : Lab 8
+Assignment : Final
 */
 
 #ifdef GL_ES

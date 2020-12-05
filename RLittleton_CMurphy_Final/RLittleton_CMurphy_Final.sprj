@@ -378,7 +378,7 @@
 	</objects>
 	<cameras />
 	<settings>
-		<entry type="property" name="Night 1.png" item="image3D" />
+		<entry type="property" name="FSQ_Pass" item="pipe" />
 		<entry type="file" name="Scene" shader="vs" />
 		<entry type="file" name="Scene" shader="ps" />
 		<entry type="file" name="FSQ_Pass" shader="vs" />

@@ -2,7 +2,7 @@
 /*
 Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
 Class : GPR-200-01
-Assignment : Lab 8
+Assignment : Final
 */
 
 // This was a test to try includes, works but overly complex for our goal

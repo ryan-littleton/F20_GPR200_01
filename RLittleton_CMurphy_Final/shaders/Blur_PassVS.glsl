@@ -3,7 +3,7 @@
 /*
 Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
 Class : GPR-200-01
-Assignment : Lab 8
+Assignment : Final
 */
 
 layout (location = 0) in vec4 aPosition;
