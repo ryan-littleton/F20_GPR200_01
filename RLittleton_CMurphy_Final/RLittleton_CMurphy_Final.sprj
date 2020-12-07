@@ -208,40 +208,28 @@
 			</inputlayout>
 			<rendertexture name="Scene" />
 			<items>
-				<item name="gSphere" type="geometry">
-					<type>Sphere</type>
-					<width>1</width>
-					<height>1</height>
-					<depth>1</depth>
-					<scaleX>0.5</scaleX>
-					<scaleY>0.5</scaleY>
-					<scaleZ>0.5</scaleZ>
-					<y>1.07700682</y>
-					<topology>TriangleList</topology>
-				</item>
 				<item name="gCube" type="geometry">
 					<type>Cube</type>
 					<width>1</width>
 					<height>1</height>
 					<depth>1</depth>
-					<x>-1.22437429</x>
-					<y>1.26500046</y>
-					<z>1.36202812</z>
+					<x>-1.61432457</x>
 					<topology>TriangleList</topology>
 				</item>
-				<item name="gTri" type="geometry">
-					<type>Triangle</type>
-					<width>1</width>
-					<height>1</height>
-					<depth>1</depth>
-					<topology>TriangleList</topology>
-				</item>
-				<item name="gSphere2" type="geometry">
+				<item name="gSphere" type="geometry">
 					<type>Sphere</type>
 					<width>1</width>
 					<height>1</height>
 					<depth>1</depth>
-					<x>-1.77105713</x>
+					<y>2.65926957</y>
+					<topology>TriangleList</topology>
+				</item>
+				<item name="gSphere1" type="geometry">
+					<type>Sphere</type>
+					<width>1.75</width>
+					<height>1</height>
+					<depth>1</depth>
+					<x>2.11265993</x>
 					<topology>TriangleList</topology>
 				</item>
 			</items>
@@ -378,7 +366,6 @@
 	</objects>
 	<cameras />
 	<settings>
-		<entry type="property" name="FSQ_Pass" item="pipe" />
 		<entry type="file" name="Scene" shader="vs" />
 		<entry type="file" name="Scene" shader="ps" />
 		<entry type="file" name="FSQ_Pass" shader="vs" />
@@ -393,9 +380,9 @@
 		<entry type="pinned" name="uProjMat" owner="Scene" />
 		<entry type="pinned" name="uViewProjMat" owner="Scene" />
 		<entry type="camera" fp="false">
-			<distance>9</distance>
-			<pitch>1</pitch>
-			<yaw>182</yaw>
+			<distance>13</distance>
+			<pitch>6</pitch>
+			<yaw>179</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
