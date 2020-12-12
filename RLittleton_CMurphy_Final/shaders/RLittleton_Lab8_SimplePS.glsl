@@ -1,7 +1,7 @@
 #version 450
 
 /*
-Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
+Author: Ryan Littleton & Cameron Murphy - using class code tutorial from Daniel Buckstein
 Class : GPR-200-01
 Assignment : Final
 */

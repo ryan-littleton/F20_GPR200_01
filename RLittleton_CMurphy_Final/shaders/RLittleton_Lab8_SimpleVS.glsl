@@ -1,6 +1,6 @@
 #version 450
 /*
-Author: Ryan Littleton - using class code tutorial from Daniel Buckstein
+Author: Ryan Littleton & Cameron Murphy - using class code tutorial from Daniel Buckstein
 Class : GPR-200-01
 Assignment : Final
 */
@@ -30,6 +30,7 @@ uniform mat4 uProjMat;
 uniform mat4 uViewProjMat;
 uniform sampler2D uSampler;
 uniform float uTime;
+uniform vec2 uMouse;
 
 // Varying
 
@@ -93,8 +94,20 @@ void main()
 	//pointLight light;
 	//initPointLight(light, vec3(2.0), vec4(1.0), 5.0);
 	
-	// Final Pos Pipeline
-	mat4 modelViewMat = uViewMat * uModelMat;
+	// Final Pos Pipeline (Altered by Cameron Murphy)
+	//vec4 newPos = vec4(aPosition.x, aPosition.y + sin(uTime), aPosition.z, aPosition.a);
+	float sinTime = sin(uTime) * 0.2;
+	float mouseX = uMouse.x + sinTime;
+	float mouseY = uMouse.y + sinTime;
+	
+	vec4 colorTint = vec4(mouseX, mouseY, 0.0, 1.0);
+	
+	mat4 warpMat = mat4(mouseX, 0.0, mouseY, 0.0,
+						0.0, mouseY, 0.0, 0.0, 
+						0.0, mouseY, 0.0, 0.0,
+						0.0, 0.0, 0.0, 0.0);
+	mat4 modelViewMat = uViewMat * uModelMat + warpMat;
+	
 	vec4 pos_camera = modelViewMat * aPosition;
 	vec4 pos_clip = uProjMat * pos_camera;
 	gl_Position = pos_clip;

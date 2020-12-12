@@ -221,7 +221,7 @@
 					<width>1</width>
 					<height>1</height>
 					<depth>1</depth>
-					<y>2.65926957</y>
+					<y>6.46092319</y>
 					<topology>TriangleList</topology>
 				</item>
 				<item name="gSphere1" type="geometry">
@@ -229,7 +229,7 @@
 					<width>1.75</width>
 					<height>1</height>
 					<depth>1</depth>
-					<x>2.11265993</x>
+					<x>3.64255857</x>
 					<topology>TriangleList</topology>
 				</item>
 			</items>
@@ -265,6 +265,7 @@
 						<value>0</value>
 					</row>
 				</variable>
+				<variable type="float2" name="uMouse" system="MousePosition" />
 			</variables>
 			<macros />
 		</pass>
@@ -368,21 +369,13 @@
 	<settings>
 		<entry type="file" name="Scene" shader="vs" />
 		<entry type="file" name="Scene" shader="ps" />
-		<entry type="file" name="FSQ_Pass" shader="vs" />
-		<entry type="file" name="FSQ_Pass" shader="ps" />
-		<entry type="file" name="Tonemap_Pass" shader="vs" />
-		<entry type="file" name="Tonemap_Pass" shader="ps" />
-		<entry type="file" name="Blur_Pass" shader="vs" />
-		<entry type="file" name="Blur_Pass" shader="ps" />
-		<entry type="file" name="TexBackground" shader="vs" />
-		<entry type="file" name="TexBackground" shader="ps" />
 		<entry type="pinned" name="uViewMat" owner="Scene" />
 		<entry type="pinned" name="uProjMat" owner="Scene" />
 		<entry type="pinned" name="uViewProjMat" owner="Scene" />
 		<entry type="camera" fp="false">
-			<distance>13</distance>
-			<pitch>6</pitch>
-			<yaw>179</yaw>
+			<distance>31</distance>
+			<pitch>21</pitch>
+			<yaw>180</yaw>
 			<roll>360</roll>
 		</entry>
 		<entry type="clearcolor" r="0" g="0" b="0" a="0" />
