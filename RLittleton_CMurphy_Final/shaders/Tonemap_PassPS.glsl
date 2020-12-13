@@ -37,7 +37,7 @@ vec4 calcToneMap(in vec2 fragCoord)
     float brightness = dot(mapped.rgb, vec3(0.2126, 0.7152, 0.0722));
     // set the value for what is considered bright. 
     // if this was HDR, using 1 would be a good starting point as brightness could be above 1.
-    if(brightness > 0.78)
+    if(brightness > 0.7)
         brightColor = vec4(mapped.rgb, 1.0);
     else
         brightColor = vec4(0.0, 0.0, 0.0, 1.0);
