@@ -45,6 +45,8 @@ out vec4 vTexcoord;
 out vec4 vView; // View vector for lighting
 out vec4 vPosition;
 
+out vec3 vColorTint;
+
 // holds point light data
 struct pointLight
 {
@@ -96,12 +98,13 @@ void main()
 	
 	// Final Pos Pipeline (Altered by Cameron Murphy)
 	//vec4 newPos = vec4(aPosition.x, aPosition.y + sin(uTime), aPosition.z, aPosition.a);
-	float sinTime = sin(uTime) * 0.2;
-	float mouseX = uMouse.x + sinTime;
+	float sinTime = sin(uTime) * 0.2; //Creates pulsating affect
+	float mouseX = uMouse.x + sinTime; //Adds mouse pos to pulsating affect
 	float mouseY = uMouse.y + sinTime;
 	
-	vec4 colorTint = vec4(mouseX, mouseY, 0.0, 1.0);
+	vColorTint = vec3(mouseX, mouseY, 0.0); //Tints color based on size
 	
+	//Alters model view mat based on mouse and time
 	mat4 warpMat = mat4(mouseX, 0.0, mouseY, 0.0,
 						0.0, mouseY, 0.0, 0.0, 
 						0.0, mouseY, 0.0, 0.0,

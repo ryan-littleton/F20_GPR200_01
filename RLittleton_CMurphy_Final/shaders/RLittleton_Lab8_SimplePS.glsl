@@ -26,6 +26,8 @@ in vec4 vTexcoord;
 in vec4 vView;
 in vec4 vPosition;
 
+in vec3 vColorTint;
+
 // holds point light data
 struct pointLight
 {
@@ -98,5 +100,6 @@ void main()
 	
 	vec3 finalColor;
 	calcLight(finalColor);
+	finalColor = mix(finalColor, vColorTint, 0.25f); //Mixes color with tint (determined by size in vertex shader)
 	rtFragColor = vec4(finalColor, 1.0);
 }
